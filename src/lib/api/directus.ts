@@ -33,6 +33,7 @@ interface Content {
   meta_title?: string;
   description?: string;
   body?: string;
+  aside?: string;
   status?: 'published' | 'draft' | 'archived' | string;
 }
 
@@ -80,15 +81,21 @@ export async function fetchArticlesByCoconId(coconId: string): Promise<DirectusR
  */
 export async function fetchArticleById(id: string): Promise<DirectusResponse<Article>> {
   const url = `${API_URL}/items/articles/${id}?fields=*,contents.*,cocon.*`;
-  return fetchFromDirectus(url);
+  console.log(`[API] Requête fetchArticleById - URL: ${url}`);
+  const response = await fetchFromDirectus<Article>(url);
+  console.log(`[API] Réponse fetchArticleById:`, response);
+  return response;
 }
 
 /**
  * Récupère un contenu spécifique par son ID avec tous les détails
  */
 export async function fetchContentById(id: string): Promise<DirectusResponse<Content>> {
-  const url = `${API_URL}/items/contents/${id}?fields=*,article.*,article.cocon.*`;
-  return fetchFromDirectus(url);
+  const url = `${API_URL}/items/contents/${id}?fields=*,article.id,article.title,article.contents.*,article.cocon.*,related_articles.id,related_articles.title,related_articles.excerpt`;
+  console.log(`[API] Requête fetchContentById - URL: ${url}`);
+  const response = await fetchFromDirectus<Content>(url);
+  console.log(`[API] Réponse fetchContentById:`, response);
+  return response;
 }
 
 /**
@@ -112,16 +119,21 @@ export async function fetchAllPublishedContent(): Promise<DirectusResponse<Conte
  */
 async function fetchFromDirectus<T>(url: string): Promise<DirectusResponse<T>> {
   try {
+    console.log(`[API] Envoi de la requête à: ${url}`);
+    const startTime = Date.now();
     const res = await fetch(url);
+    const endTime = Date.now();
+    console.log(`[API] Réponse reçue en ${endTime - startTime}ms avec status: ${res.status}`);
     
     if (!res.ok) {
       const errorData = await res.json();
+      console.error(`[API] Erreur API:`, errorData);
       throw new Error(errorData.errors?.[0]?.message || `Erreur API (${res.status})`);
     }
     
     return res.json();
   } catch (error: any) {
-    console.error('Erreur lors de l\'appel à l\'API Directus:', error);
+    console.error('[API] Erreur complète lors de l\'appel à l\'API Directus:', error);
     throw new Error(error.message || 'Erreur lors de la récupération des données');
   }
 }

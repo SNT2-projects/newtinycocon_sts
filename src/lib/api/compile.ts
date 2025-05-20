@@ -2,6 +2,28 @@ import { fetchAllPublishedContent } from './directus';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+
+// Charger les variables d'environnement
+dotenv.config();
+
+// URL de production pour les liens canoniques et hreflang
+const PRODUCTION_URL = process.env.PRODUCTION_URL || 'https://www.studiosport.fr';
+
+// Translation mapping for the guides directory
+const guidesTranslations: Record<string, string> = {
+  'de': 'fuehrungen',
+  'en': 'guides',
+  'es': 'guias',
+  'fr': 'guides',
+  'it': 'guide',
+  'nl': 'gidsen'
+};
+
+// Function to get the translated guides folder name
+function getGuidesTranslation(language: string): string {
+  return guidesTranslations[language] || 'guides'; // Default to 'guides' if language not found
+}
 
 // Définir un type spécifique pour le contenu Directus qui inclut les propriétés nécessaires
 interface DirectusArticle {
@@ -20,6 +42,7 @@ interface DirectusContent {
   meta_title?: string;
   description?: string;
   body?: string;
+  aside?: string;
   status?: string;
   date_created?: string;
   date_updated?: string;
@@ -134,6 +157,46 @@ export async function compileAllContent() {
     article.contents.push(content);
   });
   
+  // Créer un mapping pour faciliter l'accès aux informations des articles (pour les hreflang)
+  const articleMap = new Map<string, {
+    coconTitle: string;
+    articleTitle: string;
+    languages: {
+      language: string;
+      content: DirectusContent;
+    }[];
+  }>();
+  
+  // Organiser les contenus par article pour faciliter la génération des hreflang
+  coconGroups.forEach(coconGroup => {
+    const coconTitle = coconGroup.coconTitle;
+    
+    coconGroup.articles.forEach(article => {
+      const articleId = article.articleId;
+      const articleTitle = article.articleTitle;
+      
+      if (!articleMap.has(articleId)) {
+        articleMap.set(articleId, {
+          coconTitle,
+          articleTitle,
+          languages: []
+        });
+      }
+      
+      article.contents.forEach(content => {
+        if (content.language) {
+          // Extraire uniquement les deux premiers caractères du code de langue
+          const language = content.language.substring(0, 2).toLowerCase();
+          
+          articleMap.get(articleId)?.languages.push({
+            language,
+            content
+          });
+        }
+      });
+    });
+  });
+  
   // Générer les fichiers HTML pour chaque contenu
   for (const content of contents) {
     // Vérifier que le contenu a toutes les données nécessaires
@@ -157,12 +220,16 @@ export async function compileAllContent() {
       .replace(/[^\w\s]/g, '')
       .replace(/\s+/g, '_');
     
+    // Get the translated guides directory name
+    const guidesDir = getGuidesTranslation(language);
+    
     // Créer les dossiers nécessaires
-    const contentPath = path.join(exportDir, language, 'guides', coconSlug);
+    const contentPath = path.join(exportDir, language, guidesDir, coconSlug);
     fs.mkdirSync(contentPath, { recursive: true });
     
-    // Générer le contenu HTML
-    const htmlContent = generateHtml(content);
+    // Générer le contenu HTML avec hreflang
+    const articleInfo = articleMap.get(content.article.id);
+    const htmlContent = generateHtml(content, articleInfo);
     
     // Écrire le fichier HTML
     const filePath = path.join(contentPath, `${articleSlug}.html`);
@@ -204,7 +271,8 @@ export async function compileAllContent() {
     if (!coconGroup) continue;
     
     const coconTitle = coconGroup.coconTitle;
-    const indexDir = path.join(exportDir, language, 'guides', coconSlug);
+    const guidesDir = getGuidesTranslation(language);
+    const indexDir = path.join(exportDir, language, guidesDir, coconSlug);
     
     // Créer un index pour ce cocon et cette langue
     const indexContent = generateCoconIndex(coconTitle, language, coconGroup, language);
@@ -215,7 +283,8 @@ export async function compileAllContent() {
   const languages = Array.from(new Set(generatedFiles.map(file => file.language)));
   
   for (const language of languages) {
-    const indexDir = path.join(exportDir, language, 'guides');
+    const guidesDir = getGuidesTranslation(language);
+    const indexDir = path.join(exportDir, language, guidesDir);
     if (!fs.existsSync(indexDir)) {
       fs.mkdirSync(indexDir, { recursive: true });
     }
@@ -248,18 +317,20 @@ export async function compileAllContent() {
 
 // Générer l'index principal
 function generateMainIndex(languages: string[], coconGroups: CoconGroup[]): string {
-  const languagesHtml = languages.map(lang => 
-    `<li><a href="./${lang}/guides/index.html">${lang.toUpperCase()}</a></li>`
-  ).join('\n');
+  const languagesHtml = languages.map(lang => {
+    const guidesDir = getGuidesTranslation(lang);
+    return `<li><a href="${PRODUCTION_URL}/${lang}/${guidesDir}/">${lang.toUpperCase()}</a></li>`;
+  }).join('\n');
   
   const coconsList = coconGroups.map(cg => {
     const coconSlug = cg.coconTitle.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_');
     return `<li>
       <strong>${cg.coconTitle}</strong> (${cg.articles.length} articles)
       <ul>
-        ${languages.map(lang => 
-          `<li><a href="./${lang}/guides/${coconSlug}/index.html">${lang.toUpperCase()}</a></li>`
-        ).join('\n')}
+        ${languages.map(lang => {
+          const guidesDir = getGuidesTranslation(lang);
+          return `<li><a href="${PRODUCTION_URL}/${lang}/${guidesDir}/${coconSlug}/">${lang.toUpperCase()}</a></li>`;
+        }).join('\n')}
       </ul>
     </li>`;
   }).join('\n');
@@ -345,6 +416,8 @@ function generateMainIndex(languages: string[], coconGroups: CoconGroup[]): stri
 
 // Générer un index par langue
 function generateLanguageIndex(language: string, coconGroups: CoconGroup[]): string {
+  const guidesDir = getGuidesTranslation(language);
+  
   const coconsList = coconGroups.map(cg => {
     const coconSlug = cg.coconTitle.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_');
     const articlesList = cg.articles.map(article => {
@@ -355,11 +428,11 @@ function generateLanguageIndex(language: string, coconGroups: CoconGroup[]): str
       if (!hasLangContent) return '';
       
       const articleSlug = article.articleTitle.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_');
-      return `<li><a href="./${coconSlug}/${articleSlug}.html">${article.articleTitle}</a></li>`;
+      return `<li><a href="${PRODUCTION_URL}/${language}/${guidesDir}/${coconSlug}/${articleSlug}.html">${article.articleTitle}</a></li>`;
     }).filter(html => html !== '').join('\n');
     
     return `<div class="cocon-card">
-      <h3><a href="./${coconSlug}/index.html">${cg.coconTitle}</a></h3>
+      <h3><a href="${PRODUCTION_URL}/${language}/${guidesDir}/${coconSlug}/">${cg.coconTitle}</a></h3>
       <ul>
         ${articlesList}
       </ul>
@@ -417,7 +490,7 @@ function generateLanguageIndex(language: string, coconGroups: CoconGroup[]): str
 </head>
 <body>
   <div class="breadcrumb">
-    <a href="../../../index.html">Accueil</a> &gt; ${language.toUpperCase()}
+    <a href="${PRODUCTION_URL}/">Accueil</a> &gt; ${language.toUpperCase()}
   </div>
 
   <h1>Guides studioSPORT - ${language.toUpperCase()}</h1>
@@ -432,6 +505,8 @@ function generateLanguageIndex(language: string, coconGroups: CoconGroup[]): str
 
 // Générer un index par cocon et langue
 function generateCoconIndex(coconTitle: string, language: string, coconGroup: CoconGroup, displayLang: string): string {
+  const guidesDir = getGuidesTranslation(language);
+  
   const articlesList = coconGroup.articles.map(article => {
     const langContents = article.contents.filter(content => 
       content.language.toLowerCase().startsWith(language)
@@ -440,9 +515,10 @@ function generateCoconIndex(coconTitle: string, language: string, coconGroup: Co
     if (langContents.length === 0) return '';
     
     const articleSlug = article.articleTitle.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_');
+    const coconSlug = coconTitle.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_');
     
     return `<li>
-      <a href="./${articleSlug}.html">${article.articleTitle}</a>
+      <a href="${PRODUCTION_URL}/${language}/${guidesDir}/${coconSlug}/${articleSlug}.html">${article.articleTitle}</a>
       <span class="status-badge">${langContents.length} version${langContents.length > 1 ? 's' : ''}</span>
     </li>`;
   }).filter(html => html !== '').join('\n');
@@ -498,8 +574,8 @@ function generateCoconIndex(coconTitle: string, language: string, coconGroup: Co
 </head>
 <body>
   <div class="breadcrumb">
-    <a href="../../../index.html">Accueil</a> &gt; 
-    <a href="../index.html">${displayLang.toUpperCase()}</a> &gt; ${coconTitle}
+    <a href="${PRODUCTION_URL}/">Accueil</a> &gt; 
+    <a href="${PRODUCTION_URL}/${language}/${guidesDir}/">${displayLang.toUpperCase()}</a> &gt; ${coconTitle}
   </div>
 
   <h1>${coconTitle}</h1>
@@ -512,7 +588,7 @@ function generateCoconIndex(coconTitle: string, language: string, coconGroup: Co
 </html>`;
 }
 
-function generateHtml(content: DirectusContent) {
+function generateHtml(content: DirectusContent, articleInfo?: { coconTitle: string; articleTitle: string; languages: { language: string; content: DirectusContent; }[] }) {
   // Variables pour les templates PHP
   const title = content.title || content.meta_title || 'Sans titre';
   const description = content.description || '';
@@ -521,10 +597,36 @@ function generateHtml(content: DirectusContent) {
   const coconTitle = content.article.cocon.title;
   const body = content.body || '<p>Pas de contenu disponible</p>';
   
+  // Get the translated guides directory name
+  const guidesDir = getGuidesTranslation(language);
+  
   // Variables pour les fils d'ariane
   const breadcrumb1 = coconTitle.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '-');
   const breadcrumb2 = articleTitle.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '-');
-  const url = `https://www.studiosport.fr/guides/${breadcrumb1}/${breadcrumb2}.html`;
+  const url = `${PRODUCTION_URL}/${language}/${guidesDir}/${breadcrumb1}/${breadcrumb2}.html`;
+  
+  // Générer les balises hreflang
+  let hreflangTags = '';
+  
+  // Ajouter la balise hreflang pour la page courante (self-reference)
+  hreflangTags += `<link rel="alternate" hreflang="${language}" href="${url}" />\n`;
+  
+  // Ajouter les balises hreflang pour les autres langues disponibles pour cet article
+  if (articleInfo && articleInfo.languages.length > 0) {
+    articleInfo.languages.forEach(langInfo => {
+      if (langInfo.language !== language) {  // Skip la langue courante (déjà ajoutée)
+        const langGuidesDir = getGuidesTranslation(langInfo.language);
+        const langUrl = `${PRODUCTION_URL}/${langInfo.language}/${langGuidesDir}/${breadcrumb1}/${breadcrumb2}.html`;
+        hreflangTags += `<link rel="alternate" hreflang="${langInfo.language}" href="${langUrl}" />\n`;
+      }
+    });
+  }
+  
+  // Ajouter la balise hreflang x-default (page par défaut, généralement en anglais ou la principale)
+  const defaultLang = 'fr';  // On utilise le français comme langue par défaut
+  const defaultGuidesDir = getGuidesTranslation(defaultLang);
+  const defaultUrl = `${PRODUCTION_URL}/${defaultLang}/${defaultGuidesDir}/${breadcrumb1}/${breadcrumb2}.html`;
+  hreflangTags += `<link rel="alternate" hreflang="x-default" href="${defaultUrl}" />`;
   
   // Remplacer les variables PHP dans le head
   const processedHead = headHtml
@@ -543,6 +645,8 @@ function generateHtml(content: DirectusContent) {
 <html lang="${language}">
 <head>
   ${processedHead}
+  <!-- Balises hreflang pour l'internationalisation -->
+  ${hreflangTags}
 </head>
 <body>
   ${otherHtml}
@@ -551,9 +655,9 @@ function generateHtml(content: DirectusContent) {
   <div class="container">
     <nav class="breadcrumbs">
       <ol>
-        <li><a href="https://www.studiosport.fr/">Accueil</a></li>
-        <li><a href="https://www.studiosport.fr/guides/">Guides</a></li>
-        <li><a href="https://www.studiosport.fr/guides/${breadcrumb1}/">${coconTitle}</a></li>
+        <li><a href="${PRODUCTION_URL}/">Accueil</a></li>
+        <li><a href="${PRODUCTION_URL}/${language}/${guidesDir}/">${guidesDir.charAt(0).toUpperCase() + guidesDir.slice(1)}</a></li>
+        <li><a href="${PRODUCTION_URL}/${language}/${guidesDir}/${breadcrumb1}/">${coconTitle}</a></li>
         <li>${articleTitle}</li>
       </ol>
     </nav>
@@ -588,7 +692,7 @@ function generateHtml(content: DirectusContent) {
       <aside class="related-guides">
         <h2>Sur le même sujet</h2>
         <ul>
-          <li><a href="./index.html">Voir tous les guides sur ${coconTitle}</a></li>
+          <li><a href="${PRODUCTION_URL}/${language}/${guidesDir}/${breadcrumb1}/">Voir tous les guides sur ${coconTitle}</a></li>
         </ul>
       </aside>
     </div>

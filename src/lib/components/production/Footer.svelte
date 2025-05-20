@@ -171,7 +171,7 @@
       </li>
     </ul>
   </div>
-  <div class="creditsLogo">
+  <div class="creditsLogo flex my-8 justify-center">
     <img
       src="https://www.studiosport.fr/upload/image/-image-195351-moyenne.png"
       alt="Logo studioSPORT noir et blanc"

@@ -107,7 +107,7 @@ function onSearchInput(e: Event) {
     </div>
   {:else if cocon}
     <h1 class="text-3xl font-bold mb-4">{cocon.title}</h1>
-    <nav class="mb-4 text-gray-500">
+    <nav class="mb-4 text-gray-500 bg-white p-4 rounded-lg shadow-md">
       <a href="/" class="hover:underline">Accueil</a> &gt; {cocon.title}
     </nav>
     <div class="bg-white rounded-lg shadow p-6">

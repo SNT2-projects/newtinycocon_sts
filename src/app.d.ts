@@ -39,6 +39,7 @@ declare global {
 		meta_title?: string;
 		description?: string;
 		body?: string;
+		aside?: string;
 		article?: Article | string;
 		status?: 'published' | 'draft' | 'archived' | string;
 	}

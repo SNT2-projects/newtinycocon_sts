@@ -36,6 +36,7 @@
 		"vitest": "^3.0.0"
 	},
 	"dependencies": {
-		"archiver": "^7.0.1"
+		"archiver": "^7.0.1",
+		"dotenv": "^16.5.0"
 	}
 }

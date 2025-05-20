@@ -34,31 +34,71 @@
   });
 </script>
 
-<!-- Style adapté à une page de production e-commerce -->
-<div class="bg-gray-100 py-8">
+<svelte:head>
+  <!-- Charger les styles de production avec une haute priorité -->
+  <link rel="stylesheet" href="/prod.css" importance="high" />
+  <style>
+    /* Styles globaux pour surcharger Tailwind et donner la priorité aux styles de prod.css */
+    :global(html) {
+      /* Forcer la priorité des styles externes */
+      --tw-important: initial !important;
+    }
+    
+    /* Réinitialisation des styles spécifiques qui pourraient être en conflit */
+    :global(.preview-container *) {
+      font-family: inherit !important;
+      box-sizing: border-box !important;
+    }
+    
+    /* Assurez-vous que les styles spécifiques à la prod prennent le dessus */
+    :global(.preview-container .prose) {
+      max-width: none !important;
+    }
+  </style>
+</svelte:head>
+
+<!-- Utilisation d'une classe conteneur spécifique pour cibler les styles -->
+<div class="preview-container bg-white">
   <div class="container mx-auto px-4">
-    {#if loading}
-      <div class="flex justify-center p-12">
-        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
-      </div>
-    {:else if error}
-      <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-        {error}
-      </div>
-    {:else if content}
-      <!-- Article principal -->
-      <div class="bg-white rounded-lg shadow-sm overflow-hidden mb-8">
-        <div class="p-8">
-          <!-- En-tête de l'article -->
-          {#if content.body}
-            <div class="prose prose-lg max-w-none">
-              {@html content.body}
+    <div class="flex flex-col md:flex-row gap-8">
+      <!-- Colonne principale -->
+      <div class="w-full md:w-1/2 lg:w-2/3">
+        {#if loading}
+          <div class="flex justify-center p-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
+          </div>
+        {:else if error}
+          <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+            {error}
+          </div>
+        {:else if content}
+          <!-- Article principal -->
+          <div class="bg-white w-full overflow-hidden">
+            <div class="p-8">
+              <!-- En-tête de l'article -->
+              {#if content.body}
+                <div class="article-content">
+                  {@html content.body}
+                </div>
+              {:else}
+                <div class="text-gray-400 italic py-4">Pas de contenu disponible.</div>
+              {/if}
             </div>
-          {:else}
-            <div class="text-gray-400 italic py-4">Pas de contenu disponible.</div>
-          {/if}
-        </div>
+          </div>
+        {/if}
       </div>
-    {/if}
+
+      <!-- Aside - Menu latéral -->
+      <aside class="w-full md:w-1/2 lg:w-1/3 flex-shrink-0">
+        <!-- Contenu aside de l'article -->
+        {#if content?.aside}
+          <div class="bg-white rounded-lg p-6 mb-6">
+            <div class="aside-content">
+              {@html content.aside}
+            </div>
+          </div>
+        {/if}
+      </aside>
+    </div>
   </div>
 </div>

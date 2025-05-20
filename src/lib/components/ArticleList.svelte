@@ -4,7 +4,10 @@
   export let coconId: string = '';
 
   function navigateToContent(articleId: string, contentId: string, language: string) {
-    goto(`/cocon/content/${contentId}?article=${articleId}&cocon=${coconId}&lang=${language}`);
+    console.log("[Navigation] Tentative de navigation vers le contenu:", { articleId, contentId, language, coconId });
+    const url = `/cocon/content/${contentId}?article=${articleId}&cocon=${coconId}&lang=${language}`;
+    console.log("[Navigation] URL de destination:", url);
+    goto(url);
   }
 
   // Determine the color class based on content status

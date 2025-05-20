@@ -2,7 +2,7 @@
 import { onMount } from 'svelte';
 import { goto } from '$app/navigation';
 import { page } from '$app/stores';
-import { fetchContentById } from '$lib/api/directus';
+import { fetchContentById, fetchArticleById } from '$lib/api/directus';
 import { get } from 'svelte/store';
 
 let loading = true;
@@ -11,31 +11,156 @@ let content: any = null;
 let article: any = null;
 let cocon: any = null;
 
-onMount(async () => {
+// Solution alternative si l'approche standard échoue
+async function loadContentDirectlyWithRetry() {
   const { params, url } = get(page);
   const contentId = params.id;
+  const articleId = url.searchParams.get('article');
+  const coconId = url.searchParams.get('cocon');
+  const lang = url.searchParams.get('lang');
+  
+  console.log("[FALLBACK] Tentative de chargement alternatif");
+  console.log("[FALLBACK] Paramètres:", { contentId, articleId, coconId, lang });
+  
+  if (articleId && lang) {
+    try {
+      // 1. Charger d'abord l'article
+      console.log(`[FALLBACK] Chargement de l'article ${articleId}`);
+      const articleResponse = await fetch(`${import.meta.env.VITE_DIRECTUS_URL}/items/articles/${articleId}?fields=*,contents.*,cocon.*`);
+      
+      if (!articleResponse.ok) {
+        throw new Error(`Erreur lors du chargement de l'article (${articleResponse.status})`);
+      }
+      
+      const articleData = await articleResponse.json();
+      console.log("[FALLBACK] Article récupéré:", articleData);
+      
+      if (articleData && articleData.data) {
+        article = articleData.data;
+        
+        if (article.cocon) {
+          cocon = article.cocon;
+        }
+        
+        // 2. Trouver le contenu correspondant
+        if (article.contents && Array.isArray(article.contents)) {
+          console.log(`[FALLBACK] Recherche du contenu pour la langue ${lang}`);
+          
+          // D'abord essayer de trouver le contenu par ID
+          const contentById = article.contents.find((c: any) => c.id === contentId);
+          if (contentById) {
+            console.log("[FALLBACK] Contenu trouvé par ID:", contentById);
+            content = contentById;
+            return true;
+          }
+          
+          // Sinon, essayer de trouver par langue
+          const contentByLang = article.contents.find((c: any) => c.language === lang);
+          if (contentByLang) {
+            console.log("[FALLBACK] Contenu trouvé par langue:", contentByLang);
+            content = contentByLang;
+            return true;
+          }
+        }
+      }
+    } catch (err) {
+      console.error("[FALLBACK] Erreur dans la méthode alternative:", err);
+    }
+  }
+  
+  return false;
+}
+
+onMount(async () => {
+  console.log("===== DÉMARRAGE DU CHARGEMENT =====");
+  const { params, url } = get(page);
+  const contentId = params.id;
+  const articleId = url.searchParams.get('article');
+  const coconId = url.searchParams.get('cocon');
+  const lang = url.searchParams.get('lang');
+  
+  console.log("Paramètres:", { contentId, articleId, coconId, lang });
   
   if (!contentId) {
+    console.error("Erreur: ID de contenu manquant");
     error = 'Contenu introuvable. ID manquant.';
     loading = false;
     return;
   }
   
+  let standardApproachSucceeded = false;
+  
   try {
+    console.log(`Tentative de récupération du contenu avec ID: ${contentId}`);
     // Charger directement le contenu avec toutes ses relations
     const response = await fetchContentById(contentId);
+    console.log("Réponse de fetchContentById:", response);
     content = response.data;
+    console.log("Contenu récupéré:", content);
     
     // Récupérer l'article et le cocon depuis la réponse
-    article = content.article;
-    if (article) {
-      cocon = article.cocon;
+    if (content && content.article) {
+      console.log("Article trouvé dans la réponse du contenu");
+      article = content.article;
+      console.log("Article:", article);
+      
+      if (article) {
+        cocon = article.cocon;
+        console.log("Cocon:", cocon);
+        standardApproachSucceeded = true;
+      }
+    } 
+    // Si pour une raison quelconque content.article n'a pas été récupéré correctement
+    else if (articleId) {
+      console.log(`Article non trouvé dans la réponse du contenu, tentative avec articleId: ${articleId}`);
+      // Essayer de récupérer l'article directement
+      const articleResponse = await fetchArticleById(articleId);
+      console.log("Réponse de fetchArticleById:", articleResponse);
+      article = articleResponse.data;
+      console.log("Article récupéré directement:", article);
+      
+      if (article) {
+        cocon = article.cocon;
+        console.log("Cocon récupéré via article:", cocon);
+        
+        // Si nous avons reçu l'article mais pas le contenu, chercher le contenu correspondant à la langue
+        if (!content && lang && article.contents) {
+          console.log(`Recherche du contenu pour la langue: ${lang}`);
+          console.log("Contents disponibles:", article.contents);
+          const matchingContent = article.contents.find((c: any) => c.language === lang);
+          console.log("Contenu correspondant trouvé:", matchingContent);
+          
+          if (matchingContent) {
+            content = matchingContent;
+            standardApproachSucceeded = true;
+          }
+        }
+      }
     }
+    
   } catch (e) {
+    console.error('Erreur complète lors du chargement:', e);
     error = 'Erreur lors du chargement du contenu.';
-  } finally {
-    loading = false;
   }
+  
+  // Si l'approche standard a échoué, essayer la méthode alternative
+  if (!standardApproachSucceeded) {
+    console.log("L'approche standard a échoué, tentative avec la méthode alternative...");
+    const fallbackSucceeded = await loadContentDirectlyWithRetry();
+    
+    if (fallbackSucceeded) {
+      console.log("Méthode alternative réussie!");
+      error = ''; // Effacer toute erreur précédente
+    } else {
+      console.error("Toutes les tentatives ont échoué");
+      if (!error) error = 'Impossible de charger le contenu demandé.';
+    }
+  } else {
+    console.log("===== CHARGEMENT STANDARD TERMINÉ AVEC SUCCÈS =====");
+  }
+  
+  console.log("État final:", { content, article, cocon, error });
+  loading = false;
 });
 
 function goBack() {
@@ -105,7 +230,7 @@ function translateStatus(status: string): string {
       {error}
     </div>
   {:else if content}
-    <nav class="mb-4 text-gray-500 flex items-center gap-2">
+    <nav class="mb-4 bg-white p-4 rounded-lg shadow-md text-gray-500 flex items-center gap-2">
       <button 
         class="p-1 rounded hover:bg-gray-100" 
         on:click={goBack}
@@ -149,13 +274,6 @@ function translateStatus(status: string): string {
       <!-- En-tête avec métadonnées -->
       <div class="border-b border-gray-100 p-6">
         <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-          <div class="flex-1">
-            <h1 class="text-3xl font-bold mb-2">{content.title || content.meta_title || "Sans titre"}</h1>
-            {#if content.description}
-              <p class="text-gray-500">{content.description}</p>
-            {/if}
-          </div>
-          
           <div class="flex flex-col gap-2 text-sm text-gray-500">
             {#if content.date_created}
               <div>
@@ -178,13 +296,53 @@ function translateStatus(status: string): string {
       
       <!-- Corps du contenu -->
       <div class="p-6">
-        {#if content.body}
-          <div class="prose prose-lg max-w-none">
-            {@html content.body}
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <div class="md:col-span-3 space-y-6">
+            <!-- Titre -->
+            <div class="border border-gray-200 rounded-lg p-4">
+              <h3 class="text-sm font-semibold text-gray-500 mb-1">Titre:</h3>
+              <div class="text-lg font-bold">{content.title || "Non défini"}</div>
+            </div>
+            
+            <!-- Meta titre -->
+            <div class="border border-gray-200 rounded-lg p-4">
+              <h3 class="text-sm font-semibold text-gray-500 mb-1">Meta title:</h3>
+              <div class="text-lg">{content.meta_title || "Non défini"}</div>
+            </div>
+            
+            <!-- Description -->
+            <div class="border border-gray-200 rounded-lg p-4">
+              <h3 class="text-sm font-semibold text-gray-500 mb-1">Description:</h3>
+              <div>{content.description || "Non défini"}</div>
+            </div>
+            
+            <!-- Corps de l'article -->
+            <div class="border border-gray-200 rounded-lg p-4">
+              <h3 class="text-sm font-semibold text-gray-500 mb-1">Corps de l'article (body):</h3>
+              {#if content.body}
+                <div class="prose prose-lg max-w-none">
+                  {@html content.body}
+                </div>
+              {:else}
+                <div class="text-gray-400 italic">Pas de contenu disponible.</div>
+              {/if}
+            </div>
           </div>
-        {:else}
-          <div class="text-gray-400 italic py-4">Pas de contenu disponible.</div>
-        {/if}
+          
+          <!-- Côté droit (aside) -->
+          <div class="md:col-span-1">
+            <div class="border border-gray-200 rounded-lg p-4 sticky top-6">
+              <h3 class="text-sm font-semibold text-gray-500 mb-1">Côté droit (aside):</h3>
+              {#if content.aside}
+                <div class="prose prose-sm max-w-none">
+                  {@html content.aside}
+                </div>
+              {:else}
+                <div class="text-gray-400 italic">Aucun contenu latéral défini.</div>
+              {/if}
+            </div>
+          </div>
+        </div>
       </div>
       
       <!-- Liens externes, s'il y en a -->
@@ -219,7 +377,7 @@ function translateStatus(status: string): string {
             {#each article.contents as otherContent}
               {#if otherContent.id !== content.id}
                 <a 
-                  href={`/cocon/content/${otherContent.id}`}
+                  href={`/cocon/content/${otherContent.id}?article=${article.id}&cocon=${cocon ? cocon.id : ''}&lang=${otherContent.language}`}
                   class="px-3 py-1 rounded border font-semibold transition-colors bg-white text-gray-700 border-gray-300 hover:bg-gray-100"
                 >
                   {otherContent.language.toUpperCase()}

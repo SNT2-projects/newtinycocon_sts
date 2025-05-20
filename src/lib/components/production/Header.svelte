@@ -12,7 +12,7 @@
   };
 </script>
 
-<header>
+<header class="bg-white">
   <div class="headerStyle">
     <p class="contact">
       <span class="infoHeader" on:click={() => goTo('https://www.studiosport.fr/expeditions-et-retours.html')}>

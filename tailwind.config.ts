@@ -5,6 +5,10 @@ const config: Config = {
 	darkMode: ["class"],
 	content: ["./src/**/*.{html,js,svelte,ts}"],
 	safelist: ["dark"],
+	important: false,
+	corePlugins: {
+		preflight: true,
+	},
 	theme: {
 		container: {
 			center: true,
