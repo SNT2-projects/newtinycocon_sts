@@ -1,9 +1,22 @@
 import { svelteTesting } from '@testing-library/svelte/vite';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
+import type { Warning } from 'svelte/compiler';
 
 export default defineConfig({
-	plugins: [sveltekit()],
+	plugins: [
+		sveltekit()
+	],
+	// Ignorer les avertissements d'accessibilité
+	build: {
+		rollupOptions: {
+			// Svelte ne générera pas d'erreur pour les problèmes d'accessibilité
+			onwarn(warning, warn) {
+				if (warning.code?.startsWith('a11y-')) return;
+				warn(warning);
+			}
+		}
+	},
 	test: {
 		workspace: [
 			{

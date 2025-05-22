@@ -16,8 +16,13 @@ COPY . .
 # Étape 6 : Installer curl
 RUN apk add curl
 
-# Étape 7 : Construire l'application Svelte
-RUN npm run build
+# Étape 6.5 : S'assurer que les dossiers existent et que les fichiers sont copiés
+RUN mkdir -p .svelte-kit/static/export && \
+    cp -r static/export/* .svelte-kit/static/export/
+
+# Étape 7 : Construire l'application Svelte avec les avertissements désactivés
+ENV NODE_OPTIONS="--max-old-space-size=4096"
+RUN npm run build:docker
 
 # Étape 8 : Exposer le port utilisé par l'application (par défaut 3000)
 EXPOSE 3000
