@@ -72,7 +72,7 @@ const headHtml = fs.readFileSync(path.join(staticDir, 'head.php'), 'utf8');
 const otherHtml = fs.readFileSync(path.join(staticDir, 'other.php'), 'utf8');
 const styleContent = fs.readFileSync(path.join(staticDir, 'style.css'), 'utf8');
 
-export async function compileAllContent() {
+export async function compileAllContent(progressCallback?: (progress: number, total: number, stage: string) => void) {
   // Générer le nom du dossier d'export avec la date et l'heure actuelles
   const date = new Date();
   const day = String(date.getDate()).padStart(2, '0');
@@ -95,18 +95,20 @@ export async function compileAllContent() {
     fs.mkdirSync(exportDir, { recursive: true });
   }
   
-  // Créer le dossier assets pour les styles et autres ressources
-  const assetsDir = path.join(exportDir, 'assets', 'content');
-  if (!fs.existsSync(assetsDir)) {
-    fs.mkdirSync(assetsDir, { recursive: true });
+  // Le dossier assets sera créé pour chaque langue plus tard
+  
+  // Notifier la préparation
+  if (progressCallback) {
+    progressCallback(0, 100, 'Récupération des contenus publiés');
   }
   
-  // Copier le fichier CSS dans le dossier assets
-  fs.writeFileSync(path.join(assetsDir, 'style.css'), styleContent);
-  
-  // Récupérer tous les contenus publiés
-  const response = await fetchAllPublishedContent();
+  // Récupérer tous les contenus publiés (sans limite)
+  const response = await fetchAllPublishedContent(-1);
   const contents = response.data as DirectusContent[];
+  
+  if (progressCallback) {
+    progressCallback(5, 100, `Préparation de ${contents.length} pages`);
+  }
   
   let fileCount = 0;
   
@@ -197,8 +199,12 @@ export async function compileAllContent() {
     });
   });
   
+  // Garder la trace des langues pour créer les dossiers assets pour chaque langue
+  const languages = new Set<string>();
+  
   // Générer les fichiers HTML pour chaque contenu
-  for (const content of contents) {
+  for (let i = 0; i < contents.length; i++) {
+    const content = contents[i];
     // Vérifier que le contenu a toutes les données nécessaires
     if (!content.article || !content.article.cocon || !content.language) {
       console.warn('Contenu incomplet ignoré:', content.id);
@@ -207,18 +213,19 @@ export async function compileAllContent() {
     
     // Extraire uniquement les deux premiers caractères du code de langue
     const language = content.language.substring(0, 2).toLowerCase();
+    languages.add(language);
     
     const coconTitle = content.article.cocon.title;
+    // Modification ici pour conserver les tirets dans le slug du cocon
     const coconSlug = coconTitle
       .toLowerCase()
-      .replace(/[^\w\s]/g, '')
-      .replace(/\s+/g, '_');
+      .replace(/\s+/g, '-');
     
     const articleTitle = content.article.title;
+    // Modification ici pour conserver les tirets dans le slug de l'article
     const articleSlug = articleTitle
       .toLowerCase()
-      .replace(/[^\w\s]/g, '')
-      .replace(/\s+/g, '_');
+      .replace(/\s+/g, '-');
     
     // Get the translated guides directory name
     const guidesDir = getGuidesTranslation(language);
@@ -246,67 +253,29 @@ export async function compileAllContent() {
     });
     
     fileCount++;
-  }
-  
-  // Générer les index pour chaque cocon et langue
-  const langCoconMap = new Map<string, Set<string>>();
-  
-  generatedFiles.forEach(file => {
-    const key = `${file.language}_${file.coconSlug}`;
-    if (!langCoconMap.has(key)) {
-      langCoconMap.set(key, new Set<string>());
+    
+    // Mettre à jour la progression - 5% à 95% pour la génération des fichiers
+    if (progressCallback) {
+      const progress = Math.floor(5 + (i / contents.length) * 90);
+      progressCallback(progress, 100, `Génération des fichiers: ${fileCount}/${contents.length}`);
     }
-    langCoconMap.get(key)?.add(file.coconSlug);
-  });
-  
-  // Créer des index par cocon et langue
-  for (const [key, coconSet] of langCoconMap.entries()) {
-    const [language, coconSlug] = key.split('_');
-    
-    // Trouver les informations du cocon
-    const coconGroup = coconGroups.find(cg => 
-      cg.coconTitle.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_') === coconSlug
-    );
-    
-    if (!coconGroup) continue;
-    
-    const coconTitle = coconGroup.coconTitle;
-    const guidesDir = getGuidesTranslation(language);
-    const indexDir = path.join(exportDir, language, guidesDir, coconSlug);
-    
-    // Créer un index pour ce cocon et cette langue
-    const indexContent = generateCoconIndex(coconTitle, language, coconGroup, language);
-    fs.writeFileSync(path.join(indexDir, 'index.html'), indexContent);
   }
   
-  // Créer un index principal par langue
-  const languages = Array.from(new Set(generatedFiles.map(file => file.language)));
-  
+  // Créer le dossier assets pour chaque langue et y copier le CSS
   for (const language of languages) {
     const guidesDir = getGuidesTranslation(language);
-    const indexDir = path.join(exportDir, language, guidesDir);
-    if (!fs.existsSync(indexDir)) {
-      fs.mkdirSync(indexDir, { recursive: true });
+    const assetsDir = path.join(exportDir, language, guidesDir, 'assets', 'css');
+    if (!fs.existsSync(assetsDir)) {
+      fs.mkdirSync(assetsDir, { recursive: true });
     }
     
-    const langCocons = Array.from(langCoconMap.entries())
-      .filter(([key]) => key.startsWith(`${language}_`))
-      .map(([key]) => {
-        const coconSlug = key.split('_')[1];
-        const coconGroup = coconGroups.find(cg => 
-          cg.coconTitle.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_') === coconSlug
-        );
-        return coconGroup;
-      })
-      .filter((cg): cg is CoconGroup => cg !== undefined);
-    
-    const indexContent = generateLanguageIndex(language, langCocons);
-    fs.writeFileSync(path.join(indexDir, 'index.html'), indexContent);
+    // Copier le fichier CSS dans le dossier assets de chaque langue
+    fs.writeFileSync(path.join(assetsDir, 'style.css'), styleContent);
   }
   
-  // Créer un index principal
-  const mainIndexContent = generateMainIndex(languages, coconGroups);
-  fs.writeFileSync(path.join(exportDir, 'index.html'), mainIndexContent);
+  if (progressCallback) {
+    progressCallback(100, 100, 'Export terminé');
+  }
   
   return {
     exportName: exportDirName,
@@ -315,427 +284,94 @@ export async function compileAllContent() {
   };
 }
 
-// Générer l'index principal
-function generateMainIndex(languages: string[], coconGroups: CoconGroup[]): string {
-  const languagesHtml = languages.map(lang => {
-    const guidesDir = getGuidesTranslation(lang);
-    return `<li><a href="${PRODUCTION_URL}/${lang}/${guidesDir}/">${lang.toUpperCase()}</a></li>`;
-  }).join('\n');
-  
-  const coconsList = coconGroups.map(cg => {
-    const coconSlug = cg.coconTitle.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_');
-    return `<li>
-      <strong>${cg.coconTitle}</strong> (${cg.articles.length} articles)
-      <ul>
-        ${languages.map(lang => {
-          const guidesDir = getGuidesTranslation(lang);
-          return `<li><a href="${PRODUCTION_URL}/${lang}/${guidesDir}/${coconSlug}/">${lang.toUpperCase()}</a></li>`;
-        }).join('\n')}
-      </ul>
-    </li>`;
-  }).join('\n');
-  
-  return `<!DOCTYPE html>
-<html lang="fr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Index des guides studioSPORT</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    h1, h2 {
-      color: #2b89b5;
-    }
-    .container {
-      display: flex;
-      flex-wrap: wrap;
-    }
-    .sidebar {
-      flex: 1;
-      min-width: 250px;
-      margin-right: 20px;
-    }
-    .content {
-      flex: 3;
-    }
-    ul {
-      padding-left: 20px;
-    }
-    a {
-      color: #2b89b5;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    .badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 12px;
-      background-color: #efefef;
-      color: #666;
-      font-size: 0.8em;
-    }
-  </style>
-</head>
-<body>
-  <h1>Index des guides studioSPORT</h1>
-  <p>Export généré le ${new Date().toLocaleDateString('fr-FR', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })}</p>
-  
-  <div class="container">
-    <div class="sidebar">
-      <h2>Langues disponibles</h2>
-      <ul>
-        ${languagesHtml}
-      </ul>
-    </div>
-    
-    <div class="content">
-      <h2>Cocons</h2>
-      <ul>
-        ${coconsList}
-      </ul>
-    </div>
-  </div>
-</body>
-</html>`;
-}
-
-// Générer un index par langue
-function generateLanguageIndex(language: string, coconGroups: CoconGroup[]): string {
-  const guidesDir = getGuidesTranslation(language);
-  
-  const coconsList = coconGroups.map(cg => {
-    const coconSlug = cg.coconTitle.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_');
-    const articlesList = cg.articles.map(article => {
-      const hasLangContent = article.contents.some(content => 
-        content.language.toLowerCase().startsWith(language)
-      );
-      
-      if (!hasLangContent) return '';
-      
-      const articleSlug = article.articleTitle.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_');
-      return `<li><a href="${PRODUCTION_URL}/${language}/${guidesDir}/${coconSlug}/${articleSlug}.html">${article.articleTitle}</a></li>`;
-    }).filter(html => html !== '').join('\n');
-    
-    return `<div class="cocon-card">
-      <h3><a href="${PRODUCTION_URL}/${language}/${guidesDir}/${coconSlug}/">${cg.coconTitle}</a></h3>
-      <ul>
-        ${articlesList}
-      </ul>
-    </div>`;
-  }).join('\n');
-  
-  return `<!DOCTYPE html>
-<html lang="${language}">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Guides studioSPORT - ${language.toUpperCase()}</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    h1, h2, h3 {
-      color: #2b89b5;
-    }
-    .cocon-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-    }
-    .cocon-card {
-      flex: 1 1 calc(33% - 20px);
-      min-width: 300px;
-      border: 1px solid #eee;
-      padding: 15px;
-      border-radius: 5px;
-    }
-    ul {
-      padding-left: 20px;
-    }
-    a {
-      color: #2b89b5;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    .breadcrumb {
-      margin-bottom: 20px;
-      color: #666;
-    }
-    .breadcrumb a {
-      color: #666;
-    }
-  </style>
-</head>
-<body>
-  <div class="breadcrumb">
-    <a href="${PRODUCTION_URL}/">Accueil</a> &gt; ${language.toUpperCase()}
-  </div>
-
-  <h1>Guides studioSPORT - ${language.toUpperCase()}</h1>
-  <p>Tous les guides disponibles en ${language.toUpperCase()}</p>
-  
-  <div class="cocon-container">
-    ${coconsList}
-  </div>
-</body>
-</html>`;
-}
-
-// Générer un index par cocon et langue
-function generateCoconIndex(coconTitle: string, language: string, coconGroup: CoconGroup, displayLang: string): string {
-  const guidesDir = getGuidesTranslation(language);
-  
-  const articlesList = coconGroup.articles.map(article => {
-    const langContents = article.contents.filter(content => 
-      content.language.toLowerCase().startsWith(language)
-    );
-    
-    if (langContents.length === 0) return '';
-    
-    const articleSlug = article.articleTitle.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_');
-    const coconSlug = coconTitle.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '_');
-    
-    return `<li>
-      <a href="${PRODUCTION_URL}/${language}/${guidesDir}/${coconSlug}/${articleSlug}.html">${article.articleTitle}</a>
-      <span class="status-badge">${langContents.length} version${langContents.length > 1 ? 's' : ''}</span>
-    </li>`;
-  }).filter(html => html !== '').join('\n');
-  
-  return `<!DOCTYPE html>
-<html lang="${language}">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${coconTitle} - Guides studioSPORT ${displayLang.toUpperCase()}</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    h1, h2 {
-      color: #2b89b5;
-    }
-    ul {
-      padding-left: 20px;
-    }
-    li {
-      margin-bottom: 10px;
-    }
-    a {
-      color: #2b89b5;
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-    .status-badge {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 12px;
-      background-color: #efefef;
-      color: #666;
-      font-size: 0.8em;
-      margin-left: 10px;
-    }
-    .breadcrumb {
-      margin-bottom: 20px;
-      color: #666;
-    }
-    .breadcrumb a {
-      color: #666;
-    }
-  </style>
-</head>
-<body>
-  <div class="breadcrumb">
-    <a href="${PRODUCTION_URL}/">Accueil</a> &gt; 
-    <a href="${PRODUCTION_URL}/${language}/${guidesDir}/">${displayLang.toUpperCase()}</a> &gt; ${coconTitle}
-  </div>
-
-  <h1>${coconTitle}</h1>
-  <p>Articles disponibles en ${displayLang.toUpperCase()}</p>
-  
-  <ul class="articles-list">
-    ${articlesList}
-  </ul>
-</body>
-</html>`;
-}
-
 function generateHtml(content: DirectusContent, articleInfo?: { coconTitle: string; articleTitle: string; languages: { language: string; content: DirectusContent; }[] }) {
-  // Variables pour les templates PHP
-  const title = content.title || content.meta_title || 'Sans titre';
-  const description = content.description || '';
-  const language = content.language.toLowerCase().substring(0, 2);
+  if (!content.article || !content.article.cocon) {
+    return 'Contenu incomplet';
+  }
+  
   const articleTitle = content.article.title;
   const coconTitle = content.article.cocon.title;
-  const body = content.body || '<p>Pas de contenu disponible</p>';
   
-  // Get the translated guides directory name
+  // Extraire uniquement les deux premiers caractères du code de langue
+  const language = content.language.substring(0, 2).toLowerCase();
   const guidesDir = getGuidesTranslation(language);
   
   // Variables pour les fils d'ariane
-  const breadcrumb1 = coconTitle.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '-');
-  const breadcrumb2 = articleTitle.toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, '-');
+  const breadcrumb1 = coconTitle.toLowerCase().replace(/\s+/g, '-');
+  const breadcrumb2 = articleTitle.toLowerCase().replace(/\s+/g, '-');
   const url = `${PRODUCTION_URL}/${language}/${guidesDir}/${breadcrumb1}/${breadcrumb2}.html`;
   
-  // Générer les balises hreflang
+  // Préparer les méta-données
+  const title = content.meta_title || content.title || articleTitle;
+  const description = content.description || '';
+  
+  // Préparer les balises hreflang
   let hreflangTags = '';
   
-  // Ajouter la balise hreflang pour la page courante (self-reference)
-  hreflangTags += `<link rel="alternate" hreflang="${language}" href="${url}" />\n`;
-  
-  // Ajouter les balises hreflang pour les autres langues disponibles pour cet article
-  if (articleInfo && articleInfo.languages.length > 0) {
-    articleInfo.languages.forEach(langInfo => {
-      if (langInfo.language !== language) {  // Skip la langue courante (déjà ajoutée)
-        const langGuidesDir = getGuidesTranslation(langInfo.language);
-        const langUrl = `${PRODUCTION_URL}/${langInfo.language}/${langGuidesDir}/${breadcrumb1}/${breadcrumb2}.html`;
-        hreflangTags += `<link rel="alternate" hreflang="${langInfo.language}" href="${langUrl}" />\n`;
-      }
-    });
+  if (articleInfo && articleInfo.languages && articleInfo.languages.length > 0) {
+    // Ajouter les balises hreflang pour chaque langue disponible
+    hreflangTags = articleInfo.languages.map(langInfo => {
+      const langCode = langInfo.language;
+      const langGuidesDir = getGuidesTranslation(langCode);
+      
+      // Créer les slugs pour l'URL hreflang
+      const hrefBreadcrumb1 = coconTitle.toLowerCase().replace(/\s+/g, '-');
+      const hrefBreadcrumb2 = articleTitle.toLowerCase().replace(/\s+/g, '-');
+      
+      // Construire l'URL complète
+      const langUrl = `${PRODUCTION_URL}/${langCode}/${langGuidesDir}/${hrefBreadcrumb1}/${hrefBreadcrumb2}.html`;
+      
+      return `<link rel="alternate" hreflang="${langCode}" href="${langUrl}" />`;
+    }).join('\n');
+    
+    // Ajouter une balise hreflang par défaut (x-default)
+    // Utiliser la première langue de la liste comme défaut
+    const defaultLang = articleInfo.languages[0].language;
+    const defaultGuidesDir = getGuidesTranslation(defaultLang);
+    const defaultUrl = `${PRODUCTION_URL}/${defaultLang}/${defaultGuidesDir}/${breadcrumb1}/${breadcrumb2}.html`;
+    hreflangTags += `<link rel="alternate" hreflang="x-default" href="${defaultUrl}" />`;
   }
   
-  // Ajouter la balise hreflang x-default (page par défaut, généralement en anglais ou la principale)
-  const defaultLang = 'fr';  // On utilise le français comme langue par défaut
-  const defaultGuidesDir = getGuidesTranslation(defaultLang);
-  const defaultUrl = `${PRODUCTION_URL}/${defaultLang}/${defaultGuidesDir}/${breadcrumb1}/${breadcrumb2}.html`;
-  hreflangTags += `<link rel="alternate" hreflang="x-default" href="${defaultUrl}" />`;
-  
   // Remplacer les variables PHP dans le head
-  const processedHead = headHtml
+  const headWithVariables = headHtml
+    // Mettre à jour le chemin CSS pour qu'il pointe vers la structure par langue
+    .replace(/<link title="style studiosport" type="text\/css" rel="stylesheet" href="..\/assets\/content\/style.css" \/>/g, 
+      `<link title="style studiosport" type="text\/css" rel="stylesheet" href="..\/assets\/css\/style.css" \/>`)
     .replace(/\<\?php echo \$title \?\>/g, title)
     .replace(/\<\?php echo \$desc \?\>/g, description)
     .replace(/\<\?php echo \$url \?\>/g, url)
     .replace(/\<\?php echo \$breadcrumb1 \?\>/g, breadcrumb1)
     .replace(/\<\?php echo \$breadcrumb2 \?\>/g, breadcrumb2);
   
-  // Remplacer la fonction PHP date dans le footer
-  const processedFooter = footerHtml
+  // Remplacer les variables PHP dans le footer
+  const footerWithVariables = footerHtml
     .replace(/\<\?= date\('Y'\) \?\>/g, new Date().getFullYear().toString());
   
-  // Construire le HTML complet
-  return `<!DOCTYPE html>
+  // Combiner tous les éléments pour créer le HTML final
+  const finalHtml = `
+<!DOCTYPE html>
 <html lang="${language}">
 <head>
-  ${processedHead}
-  <!-- Balises hreflang pour l'internationalisation -->
+  ${headWithVariables}
+  <link rel="canonical" href="${url}" />
   ${hreflangTags}
 </head>
 <body>
-  ${otherHtml}
   ${headerHtml}
-  
-  <div class="container">
-    <nav class="breadcrumbs">
-      <ol>
-        <li><a href="${PRODUCTION_URL}/">Accueil</a></li>
-        <li><a href="${PRODUCTION_URL}/${language}/${guidesDir}/">${guidesDir.charAt(0).toUpperCase() + guidesDir.slice(1)}</a></li>
-        <li><a href="${PRODUCTION_URL}/${language}/${guidesDir}/${breadcrumb1}/">${coconTitle}</a></li>
-        <li>${articleTitle}</li>
-      </ol>
-    </nav>
-    
-    <div class="content-wrapper">
-      <article class="guide-content">
-        <header>
-          <h1>${title}</h1>
-          ${description ? `<p class="description">${description}</p>` : ''}
-          <div class="meta">
-            <div class="category">Guide: ${coconTitle}</div>
-            <div class="article">Article: ${articleTitle}</div>
-            <div class="language">Langue: ${language.toUpperCase()}</div>
-          </div>
-        </header>
-        
-        <div class="article-body">
-          ${body}
-        </div>
-        
-        <footer class="article-footer">
-          <div class="update-date">
-            Dernière mise à jour: ${new Date(content.date_updated || content.date_created || new Date()).toLocaleDateString('fr-FR', {
-              day: '2-digit',
-              month: '2-digit',
-              year: 'numeric'
-            })}
-          </div>
-        </footer>
-      </article>
-      
-      <aside class="related-guides">
-        <h2>Sur le même sujet</h2>
-        <ul>
-          <li><a href="${PRODUCTION_URL}/${language}/${guidesDir}/${breadcrumb1}/">Voir tous les guides sur ${coconTitle}</a></li>
-        </ul>
-      </aside>
+  <div class="content-wrapper">
+    <div class="content-main">
+      ${content.body || ''}
+    </div>
+    <div class="content-aside">
+      ${content.aside || ''}
     </div>
   </div>
-  
-  ${processedFooter}
-  
-  <script>
-    // Ajout de scripts spécifiques aux pages de guide
-    document.addEventListener('DOMContentLoaded', function() {
-      // Ajouter des classes pour les images et tableaux dans le contenu
-      const articleBody = document.querySelector('.article-body');
-      if (articleBody) {
-        // Images
-        const images = articleBody.querySelectorAll('img');
-        images.forEach(img => {
-          img.classList.add('img-responsive');
-          // Ajouter le wrapper pour le centrage si pas déjà fait
-          if (img.parentElement.nodeName !== 'DIV' || !img.parentElement.classList.contains('image-centre')) {
-            const wrapper = document.createElement('div');
-            wrapper.classList.add('image-centre');
-            img.parentNode.insertBefore(wrapper, img);
-            wrapper.appendChild(img);
-          }
-        });
-        
-        // Tableaux
-        const tables = articleBody.querySelectorAll('table');
-        tables.forEach(table => {
-          table.classList.add('table', 'table-responsive');
-          // Ajouter un div wrapper pour la responsivité si pas déjà fait
-          if (table.parentElement.nodeName !== 'DIV' || !table.parentElement.classList.contains('table-wrapper')) {
-            const wrapper = document.createElement('div');
-            wrapper.classList.add('table-wrapper');
-            table.parentNode.insertBefore(wrapper, table);
-            wrapper.appendChild(table);
-          }
-        });
-      }
-    });
-  </script>
+  ${footerWithVariables}
+  ${otherHtml}
 </body>
 </html>`;
+  
+  return finalHtml;
 }
 
 /**

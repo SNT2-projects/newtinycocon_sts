@@ -109,8 +109,9 @@ export async function fetchContentsByArticleId(articleId: string): Promise<Direc
 /**
  * Récupère tous les contenus publiés avec leurs relations (article et cocon)
  */
-export async function fetchAllPublishedContent(): Promise<DirectusResponse<Content[]>> {
-  const url = `${API_URL}/items/contents?fields=*,article.title,article.id,article.cocon.title,article.cocon.id&filter[status][_eq]=published`;
+export async function fetchAllPublishedContent(limit = -1): Promise<DirectusResponse<Content[]>> {
+  const limitParam = limit > 0 ? `&limit=${limit}` : '&limit=-1';
+  const url = `${API_URL}/items/contents?fields=*,article.title,article.id,article.cocon.title,article.cocon.id&filter[status][_eq]=published${limitParam}`;
   return fetchFromDirectus(url);
 }
 

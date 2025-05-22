@@ -15,6 +15,9 @@ let error = '';
 let exports: string[] = [];
 let compiling = false;
 let deleting = '';
+let compilationProgress = 0;
+let compilationTotal = 100;
+let compilationStage = '';
 
 async function loadCocons() {
   loading = true;
@@ -42,14 +45,39 @@ async function compilePages() {
   if (compiling) return;
   
   compiling = true;
+  compilationProgress = 0;
+  compilationStage = 'Initialisation...';
+  
   try {
     const response = await fetch('/api/compile', {
-      method: 'POST'
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({})
     });
     
     if (!response.ok) {
       throw new Error('Erreur lors de la compilation');
     }
+    
+    // Créer un EventSource pour recevoir les mises à jour de progression
+    const eventSource = new EventSource('/api/compile/status');
+    
+    eventSource.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      compilationProgress = data.progress;
+      compilationTotal = data.total;
+      compilationStage = data.stage;
+      
+      if (data.progress >= 100) {
+        eventSource.close();
+      }
+    };
+    
+    eventSource.onerror = () => {
+      eventSource.close();
+    };
     
     const result = await response.json();
     
@@ -265,10 +293,24 @@ onMount(() => {
             </svg>
             Compilation en cours...
           {:else}
-            <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path stroke="#64748B" stroke-width="2" d="M4 4h16v16H4V4zm0 0l8 8 8-8"/></svg>
+            <svg class="mr-2" width="18" height="18" fill="none" viewBox="0 0 24 24"><path stroke="#3B82F6" stroke-width="2" d="M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"/></svg>
             Compiler les pages publiées
           {/if}
         </Button>
+        
+        <!-- Barre de progression pour la compilation -->
+        {#if compiling}
+          <div class="mt-2">
+            <div class="text-sm text-gray-600 mb-1 flex justify-between">
+              <span>{compilationStage}</span>
+              <span>{compilationProgress}%</span>
+            </div>
+            <div class="w-full bg-gray-200 rounded-full h-2">
+              <div class="bg-blue-600 h-2 rounded-full" style="width: {compilationProgress}%"></div>
+            </div>
+          </div>
+        {/if}
+        
         <Button asChild variant="destructive" class=" border-red-200 bg-red-50 text-red-700 hover:bg-red-100">
           <a class="flex items-center gap-2" href="mailto:service-info@snt2.fr?subject=Problème%20TinyCocon%20(studioSPORT)&body=Bonjour, je rencontre un problème sur l'application TinyCocon (studioSPORT)">
             <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path stroke="#DC2626" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
