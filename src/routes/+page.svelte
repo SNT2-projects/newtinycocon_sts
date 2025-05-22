@@ -158,7 +158,9 @@ onMount(() => {
   <!-- Header principal -->
   <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-2">
     <div class="flex items-center gap-3">
-      <svg width="40" height="40" fill="none" viewBox="0 0 40 40"><rect width="40" height="40" rx="12" fill="#FFEDD5"/><path d="M12 28V12h16v16H12Zm2-2h12V14H14v12Zm2-2v-8h8v8h-8Z" fill="#F59E42"/></svg>
+      <div class="flex items-center gap-2 bg-orange-500 rounded-full p-1">
+      <img src="/cocon_logo_white.png" alt="TinyCocon" class="w-10 h-10" />
+      </div>
       <div class="flex items-center gap-2">
         <div class="text-2xl font-extrabold tracking-tight text-gray-900">TinyCocon</div>
         <span class="text-xs font-semibold text-orange-500 bg-orange-50 rounded px-2 py-0.5 align-middle">studioSPORT</span>

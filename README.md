@@ -36,16 +36,10 @@ npm run build
 You can preview the production build with `npm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
-> - clean page preview 
-> clean button preview
-> translate guide forlder depends on langue
-> beta test multi langue
-> import hreflang
-> import content studiosport
-> review
-> mep studiosport
-> init ops store
-> mep ops store
-> import content ops store
->
 
+- [ ] Mettre en place nom de domaine SSL
+- [ ] Altérer contenu pour modifier url (worflow n8n)
+- [ ] Modifier code de compilaton pour reconstruire la bonne arboreseance
+  
+
+  
