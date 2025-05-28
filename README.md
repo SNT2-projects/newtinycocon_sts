@@ -38,9 +38,9 @@ You can preview the production build with `npm run preview`.
 > To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
 
 - [x] Fix image path
-- [ ] Fix export apparence
+- [-] Fix export apparence
 - [x] Fixer liens export lang
-- [ ] ajouter indicateur probleme
+- [-] ajouter indicateur probleme
 - [x] bouton de visualisation
 - [ ] Monter OPS
-- [ ] users roles
+- [ x users roles
