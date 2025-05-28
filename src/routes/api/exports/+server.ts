@@ -1,12 +1,10 @@
 import { json } from '@sveltejs/kit';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import type { RequestHandler } from './$types';
 
-// Récupère le chemin absolu du répertoire exports
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const exportDir = path.join(__dirname, '..', '..', '..', '..', 'exports');
+// Utiliser process.cwd() pour pointer vers la racine du projet au lieu de chemins relatifs
+const exportDir = path.join(process.cwd(), 'exports');
 
 export const GET: RequestHandler = async () => {
   try {

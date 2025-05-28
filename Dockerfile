@@ -16,9 +16,9 @@ COPY . .
 # Étape 6 : Installer curl
 RUN apk add curl
 
-# Étape 6.5 : S'assurer que les dossiers existent et que les fichiers sont copiés
-RUN mkdir -p .svelte-kit/static/export && \
-    cp -r static/export/* .svelte-kit/static/export/
+# Étape 6.5 : S'assurer que le dossier exports existe et a les bonnes permissions
+RUN mkdir -p exports && \
+    chmod 755 exports
 
 # Étape 7 : Construire l'application Svelte avec les avertissements désactivés
 ENV NODE_OPTIONS="--max-old-space-size=4096"

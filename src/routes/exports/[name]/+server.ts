@@ -7,9 +7,8 @@ import archiver from 'archiver';
 import { pipeline } from 'stream/promises';
 import { Readable } from 'stream';
 
-// Récupère le chemin absolu du répertoire exports
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const exportDir = path.join(__dirname, '..', '..', '..', '..', 'exports');
+// Utiliser process.cwd() pour pointer vers la racine du projet au lieu de chemins relatifs
+const exportDir = path.join(process.cwd(), 'exports');
 
 export const GET: RequestHandler = async ({ params }) => {
   const exportName = params.name;

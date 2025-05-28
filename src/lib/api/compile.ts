@@ -1,7 +1,6 @@
 import { fetchAllPublishedContent } from './directus';
 import fs from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 
 // Charger les variables d'environnement
@@ -61,10 +60,9 @@ interface CoconGroup {
   }[];
 }
 
-// Récupère le chemin absolu du répertoire exports
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const exportDirRoot = path.join(__dirname, '..', '..', '..', 'exports');
-const staticDir = path.join(__dirname, '..', '..', '..', 'static', 'export');
+// Utiliser process.cwd() pour pointer vers la racine du projet au lieu de chemins relatifs
+const exportDirRoot = path.join(process.cwd(), 'exports');
+const staticDir = path.join(process.cwd(), 'static', 'export');
 
 // Lire les fichiers statiques au démarrage
 const headerHtml = fs.readFileSync(path.join(staticDir, 'header.php'), 'utf8');
