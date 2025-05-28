@@ -46,6 +46,7 @@ interface DirectusContent {
   status?: string;
   date_created?: string;
   date_updated?: string;
+  slug?: string;
   article: DirectusArticle;
 }
 
@@ -72,6 +73,85 @@ const headHtml = fs.readFileSync(path.join(staticDir, 'head.php'), 'utf8');
 const otherHtml = fs.readFileSync(path.join(staticDir, 'other.php'), 'utf8');
 const styleContent = fs.readFileSync(path.join(staticDir, 'style.css'), 'utf8');
 
+// Fonction pour télécharger une image et la sauvegarder dans le dossier d'images du cocon
+async function downloadImage(assetId: string, filename: string, coconImagesDir: string): Promise<boolean> {
+  if (!coconImagesDir) {
+    console.warn('Dossier d\'images du cocon non spécifié, impossible de télécharger l\'image');
+    return false;
+  }
+  
+  try {
+    const response = await fetch(`https://back.tinycocon.snt2.tech/assets/${assetId}`);
+    if (!response.ok) {
+      console.warn(`Erreur lors du téléchargement de l'image ${assetId}: ${response.status}`);
+      return false;
+    }
+
+    const buffer = await response.arrayBuffer();
+    const filePath = path.join(coconImagesDir, filename);
+    fs.writeFileSync(filePath, Buffer.from(buffer));
+    console.log(`Image téléchargée: ${filename} dans ${coconImagesDir}`);
+    return true;
+  } catch (error) {
+    console.error(`Exception lors du téléchargement de l'image ${assetId}:`, error);
+    return false;
+  }
+}
+
+// Fonction pour traiter les URLs des images dans le contenu HTML pour un cocon spécifique
+async function processImageUrls(html: string, coconImagesDir?: string): Promise<string> {
+  if (!html) return '';
+
+  // Regex pour trouver les URLs d'images au format https://back.tinycocon.snt2.tech/assets/[id]
+  const imageUrlRegex = /https:\/\/back\.tinycocon\.snt2\.tech\/assets\/([a-zA-Z0-9-]+)/g;
+  
+  // Collecter tous les IDs d'assets uniques
+  const assetIds = new Set<string>();
+  let match;
+  
+  // Trouver tous les IDs d'assets dans le HTML
+  while ((match = imageUrlRegex.exec(html)) !== null) {
+    assetIds.add(match[1]);
+  }
+  
+  // Créer un mapping des IDs d'assets vers les noms de fichiers
+  const assetIdToFilename = new Map<string, string>();
+  
+  // Récupérer les informations sur chaque asset
+  for (const assetId of assetIds) {
+    try {
+      const response = await fetch(`https://back.tinycocon.snt2.tech/files/${assetId}`);
+      if (response.ok) {
+        const { data } = await response.json();
+        if (data && data.filename_download) {
+          assetIdToFilename.set(assetId, data.filename_download);
+          
+          // Si le dossier d'images du cocon est spécifié, télécharger l'image
+          if (coconImagesDir) {
+            await downloadImage(assetId, data.filename_download, coconImagesDir);
+          }
+        } else {
+          console.warn(`Impossible de récupérer le nom de fichier pour l'asset ${assetId}`);
+        }
+      } else {
+        console.warn(`Erreur lors de la récupération de l'asset ${assetId}: ${response.status}`);
+      }
+    } catch (error) {
+      console.error(`Exception lors de la récupération de l'asset ${assetId}:`, error);
+    }
+  }
+  
+  // Remplacer toutes les URLs d'images dans le HTML
+  let processedHtml = html;
+  for (const [assetId, filename] of assetIdToFilename.entries()) {
+    const oldUrl = `https://back.tinycocon.snt2.tech/assets/${assetId}`;
+    const newUrl = `images/${filename}`;
+    processedHtml = processedHtml.replace(new RegExp(oldUrl.replace(/\//g, '\\/').replace(/\./g, '\\.'), 'g'), newUrl);
+  }
+  
+  return processedHtml;
+}
+
 export async function compileAllContent(progressCallback?: (progress: number, total: number, stage: string) => void) {
   // Générer le nom du dossier d'export avec la date et l'heure actuelles
   const date = new Date();
@@ -95,8 +175,6 @@ export async function compileAllContent(progressCallback?: (progress: number, to
     fs.mkdirSync(exportDir, { recursive: true });
   }
   
-  // Le dossier assets sera créé pour chaque langue plus tard
-  
   // Notifier la préparation
   if (progressCallback) {
     progressCallback(0, 100, 'Récupération des contenus publiés');
@@ -112,7 +190,7 @@ export async function compileAllContent(progressCallback?: (progress: number, to
   
   let fileCount = 0;
   
-  // Créer un index des cocons et articles
+  // Créer un index des cocons et articles organisés par langue et cocon
   const coconGroups: CoconGroup[] = [];
   const generatedFiles: {
     coconTitle: string;
@@ -221,25 +299,28 @@ export async function compileAllContent(progressCallback?: (progress: number, to
       .toLowerCase()
       .replace(/\s+/g, '-');
     
-    const articleTitle = content.article.title;
-    // Modification ici pour conserver les tirets dans le slug de l'article
-    const articleSlug = articleTitle
-      .toLowerCase()
-      .replace(/\s+/g, '-');
+    // Utiliser le slug traduit du contenu au lieu du titre de l'article
+    const contentSlug = content.slug || content.article.title.toLowerCase().replace(/\s+/g, '-');
     
     // Get the translated guides directory name
     const guidesDir = getGuidesTranslation(language);
     
-    // Créer les dossiers nécessaires
+    // Créer les dossiers nécessaires pour le cocon
     const contentPath = path.join(exportDir, language, guidesDir, coconSlug);
     fs.mkdirSync(contentPath, { recursive: true });
     
-    // Générer le contenu HTML avec hreflang
-    const articleInfo = articleMap.get(content.article.id);
-    const htmlContent = generateHtml(content, articleInfo);
+    // Créer le dossier images pour ce cocon spécifique
+    const coconImagesDir = path.join(contentPath, 'images');
+    if (!fs.existsSync(coconImagesDir)) {
+      fs.mkdirSync(coconImagesDir, { recursive: true });
+    }
     
-    // Écrire le fichier HTML
-    const filePath = path.join(contentPath, `${articleSlug}.html`);
+    // Générer le contenu HTML avec hreflang et traitement des images pour ce cocon
+    const articleInfo = articleMap.get(content.article.id);
+    const htmlContent = await generateHtml(content, articleInfo, coconImagesDir);
+    
+    // Écrire le fichier HTML avec le slug traduit
+    const filePath = path.join(contentPath, `${contentSlug}.html`);
     const relativePath = path.relative(exportDir, filePath);
     fs.writeFileSync(filePath, htmlContent);
     
@@ -247,7 +328,7 @@ export async function compileAllContent(progressCallback?: (progress: number, to
     generatedFiles.push({
       coconTitle,
       coconSlug,
-      articleTitle,
+      articleTitle: content.article.title,
       language,
       filePath: relativePath
     });
@@ -284,7 +365,7 @@ export async function compileAllContent(progressCallback?: (progress: number, to
   };
 }
 
-function generateHtml(content: DirectusContent, articleInfo?: { coconTitle: string; articleTitle: string; languages: { language: string; content: DirectusContent; }[] }) {
+async function generateHtml(content: DirectusContent, articleInfo?: { coconTitle: string; articleTitle: string; languages: { language: string; content: DirectusContent; }[] }, coconImagesDir?: string) {
   if (!content.article || !content.article.cocon) {
     return 'Contenu incomplet';
   }
@@ -298,7 +379,8 @@ function generateHtml(content: DirectusContent, articleInfo?: { coconTitle: stri
   
   // Variables pour les fils d'ariane
   const breadcrumb1 = coconTitle.toLowerCase().replace(/\s+/g, '-');
-  const breadcrumb2 = articleTitle.toLowerCase().replace(/\s+/g, '-');
+  // Utiliser le slug traduit du contenu pour breadcrumb2
+  const breadcrumb2 = content.slug || articleTitle.toLowerCase().replace(/\s+/g, '-');
   const url = `${PRODUCTION_URL}/${language}/${guidesDir}/${breadcrumb1}/${breadcrumb2}.html`;
   
   // Préparer les méta-données
@@ -316,7 +398,8 @@ function generateHtml(content: DirectusContent, articleInfo?: { coconTitle: stri
       
       // Créer les slugs pour l'URL hreflang
       const hrefBreadcrumb1 = coconTitle.toLowerCase().replace(/\s+/g, '-');
-      const hrefBreadcrumb2 = articleTitle.toLowerCase().replace(/\s+/g, '-');
+      // Utiliser le slug traduit de chaque contenu pour les hreflang
+      const hrefBreadcrumb2 = langInfo.content.slug || articleTitle.toLowerCase().replace(/\s+/g, '-');
       
       // Construire l'URL complète
       const langUrl = `${PRODUCTION_URL}/${langCode}/${langGuidesDir}/${hrefBreadcrumb1}/${hrefBreadcrumb2}.html`;
@@ -328,7 +411,8 @@ function generateHtml(content: DirectusContent, articleInfo?: { coconTitle: stri
     // Utiliser la première langue de la liste comme défaut
     const defaultLang = articleInfo.languages[0].language;
     const defaultGuidesDir = getGuidesTranslation(defaultLang);
-    const defaultUrl = `${PRODUCTION_URL}/${defaultLang}/${defaultGuidesDir}/${breadcrumb1}/${breadcrumb2}.html`;
+    const defaultBreadcrumb2 = articleInfo.languages[0].content.slug || articleTitle.toLowerCase().replace(/\s+/g, '-');
+    const defaultUrl = `${PRODUCTION_URL}/${defaultLang}/${defaultGuidesDir}/${breadcrumb1}/${defaultBreadcrumb2}.html`;
     hreflangTags += `<link rel="alternate" hreflang="x-default" href="${defaultUrl}" />`;
   }
   
@@ -347,6 +431,10 @@ function generateHtml(content: DirectusContent, articleInfo?: { coconTitle: stri
   const footerWithVariables = footerHtml
     .replace(/\<\?= date\('Y'\) \?\>/g, new Date().getFullYear().toString());
   
+  // Traiter les URLs des images dans le contenu pour ce cocon spécifique
+  const processedBody = content.body ? await processImageUrls(content.body, coconImagesDir) : '';
+  const processedAside = content.aside ? await processImageUrls(content.aside, coconImagesDir) : '';
+  
   // Combiner tous les éléments pour créer le HTML final
   const finalHtml = `
 <!DOCTYPE html>
@@ -360,10 +448,10 @@ function generateHtml(content: DirectusContent, articleInfo?: { coconTitle: stri
   ${headerHtml}
   <div class="content-wrapper">
     <div class="content-main">
-      ${content.body || ''}
+      ${processedBody}
     </div>
     <div class="content-aside">
-      ${content.aside || ''}
+      ${processedAside}
     </div>
   </div>
   ${footerWithVariables}
@@ -422,4 +510,4 @@ export function deleteExport(exportName: string) {
       message: `Erreur lors de la suppression de l'export "${exportName}": ${error instanceof Error ? error.message : String(error)}`
     };
   }
-} 
+}

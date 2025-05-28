@@ -44,7 +44,10 @@ export async function fetchCocons(query: string = ''): Promise<DirectusResponse<
   // Construire l'URL de base avec tous les champs nécessaires
   let url = `${API_URL}/items/cocons?fields=*,articles.id,articles.title,articles.contents.id,articles.contents.language`;
   
-  // Ajouter le filtre seulement si query n'est pas vide
+  // Ajouter le filtre pour le website "sts"
+  url += `&filter[website][name][_eq]=sts`;
+
+  // Ajouter le filtre de recherche si query n'est pas vide
   if (query.trim() !== '') {
     url += `&filter[title][_contains]=${encodeURIComponent(query)}`;
   }
@@ -56,7 +59,7 @@ export async function fetchCocons(query: string = ''): Promise<DirectusResponse<
  * Récupère un cocon par son ID avec tous ses articles et leurs détails
  */
 export async function fetchCoconById(id: string): Promise<DirectusResponse<Cocon>> {
-  const url = `${API_URL}/items/cocons/${id}?fields=*,articles.*,articles.contents.*`;
+  const url = `${API_URL}/items/cocons/${id}?fields=*,articles.*,articles.contents.*&filter[website][name][_eq]=sts`;
   return fetchFromDirectus(url);
 }
 
@@ -64,7 +67,7 @@ export async function fetchCoconById(id: string): Promise<DirectusResponse<Cocon
  * Récupère un cocon par son titre exact
  */
 export async function fetchCoconByTitle(title: string): Promise<DirectusResponse<Cocon[]>> {
-  const url = `${API_URL}/items/cocons?fields=*,articles.*,articles.contents.*&filter[title][_eq]=${encodeURIComponent(title)}`;
+  const url = `${API_URL}/items/cocons?fields=*,articles.*,articles.contents.*&filter[title][_eq]=${encodeURIComponent(title)}&filter[website][name][_eq]=sts`;
   return fetchFromDirectus(url);
 }
 
@@ -72,7 +75,7 @@ export async function fetchCoconByTitle(title: string): Promise<DirectusResponse
  * Récupère tous les articles d'un cocon
  */
 export async function fetchArticlesByCoconId(coconId: string): Promise<DirectusResponse<Article[]>> {
-  const url = `${API_URL}/items/articles?fields=*,contents.*&filter[cocon][_eq]=${coconId}`;
+  const url = `${API_URL}/items/articles?fields=*,contents.*&filter[cocon][_eq]=${coconId}&filter[cocon][website][name][_eq]=sts`;
   return fetchFromDirectus(url);
 }
 
@@ -80,7 +83,7 @@ export async function fetchArticlesByCoconId(coconId: string): Promise<DirectusR
  * Récupère un article par son ID
  */
 export async function fetchArticleById(id: string): Promise<DirectusResponse<Article>> {
-  const url = `${API_URL}/items/articles/${id}?fields=*,contents.*,cocon.*`;
+  const url = `${API_URL}/items/articles/${id}?fields=*,contents.*,cocon.*&filter[cocon][website][name][_eq]=sts`;
   console.log(`[API] Requête fetchArticleById - URL: ${url}`);
   const response = await fetchFromDirectus<Article>(url);
   console.log(`[API] Réponse fetchArticleById:`, response);
@@ -91,7 +94,7 @@ export async function fetchArticleById(id: string): Promise<DirectusResponse<Art
  * Récupère un contenu spécifique par son ID avec tous les détails
  */
 export async function fetchContentById(id: string): Promise<DirectusResponse<Content>> {
-  const url = `${API_URL}/items/contents/${id}?fields=*,article.id,article.title,article.contents.*,article.cocon.*,related_articles.id,related_articles.title,related_articles.excerpt`;
+  const url = `${API_URL}/items/contents/${id}?fields=*,article.id,article.title,article.contents.*,article.cocon.*,related_articles.id,related_articles.title,related_articles.excerpt&filter[article][cocon][website][name][_eq]=sts`;
   console.log(`[API] Requête fetchContentById - URL: ${url}`);
   const response = await fetchFromDirectus<Content>(url);
   console.log(`[API] Réponse fetchContentById:`, response);
@@ -102,7 +105,7 @@ export async function fetchContentById(id: string): Promise<DirectusResponse<Con
  * Récupère tous les contenus d'un article
  */
 export async function fetchContentsByArticleId(articleId: string): Promise<DirectusResponse<Content[]>> {
-  const url = `${API_URL}/items/contents?fields=*&filter[article][_eq]=${articleId}`;
+  const url = `${API_URL}/items/contents?fields=*&filter[article][_eq]=${articleId}&filter[article][cocon][website][name][_eq]=sts`;
   return fetchFromDirectus(url);
 }
 
@@ -111,7 +114,7 @@ export async function fetchContentsByArticleId(articleId: string): Promise<Direc
  */
 export async function fetchAllPublishedContent(limit = -1): Promise<DirectusResponse<Content[]>> {
   const limitParam = limit > 0 ? `&limit=${limit}` : '&limit=-1';
-  const url = `${API_URL}/items/contents?fields=*,article.title,article.id,article.cocon.title,article.cocon.id&filter[status][_eq]=published${limitParam}`;
+  const url = `${API_URL}/items/contents?fields=*,article.title,article.id,article.cocon.title,article.cocon.id&filter[status][_eq]=published&filter[article][cocon][website][name][_eq]=sts${limitParam}`;
   return fetchFromDirectus(url);
 }
 
