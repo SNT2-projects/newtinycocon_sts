@@ -444,14 +444,14 @@ async function generateHtml(content: DirectusContent, articleInfo?: { coconTitle
 </head>
 <body>
   ${headerHtml}
-  <div class="content-wrapper">
-    <div class="content-main">
+  <section class="flex">
+    <article class="content-main">
       ${processedBody}
-    </div>
-    <div class="content-aside">
+    </article>
+    <aside class="content-aside">
       ${processedAside}
-    </div>
-  </div>
+    </aside>
+  </section>
   ${footerWithVariables}
   ${otherHtml}
 </body>

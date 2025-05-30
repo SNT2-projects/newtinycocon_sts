@@ -1,3 +1,4 @@
+<header>
 <div class="headerStyle">
    <p class="contact"><span class="infoHeader" onclick="window.location.href='https://www.studiosport.fr/expeditions-et-retours.html';">Relais colis offert à partir de 79€ en France métropolitaine </span>| <span class="infoHeader" onclick="window.location.href='https://www.studiosport.fr/devis-drone-camera-m60647.html';">Demandez un devis</span>| <span class="infoHeader" onclick="window.location.href='https://www.studiosport.fr/marques-m60682.html';">Toutes nos marques</span></p>
    <div class="headerRaw">
@@ -42,3 +43,4 @@
       <li class="last_menu sprite-head s9" onclick="window.location.href='https://www.studiosport.fr/drones-modelisme-multirotors-dji-c-30_360.html';"><span>DJI</span></li>
    </ul>
 </nav>
+</header>

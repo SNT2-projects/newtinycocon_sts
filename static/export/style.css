@@ -732,3 +732,38 @@
      text-decoration: none;
      margin-top: 10px;
  }
+
+ footer {
+     background-color: #333;
+ }
+ 
+/* Layout structure */
+section.flex {
+    display: flex;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 20px;
+    padding: 20px;
+}
+
+article.content-main {
+    flex: 2;
+    min-width: 0;
+}
+
+aside.content-aside {
+    flex: 1;
+    min-width: 250px;
+    padding: 20px;
+}
+
+@media screen and (max-width: 768px) {
+    section.flex {
+        flex-direction: column;
+    }
+    
+    aside.content-aside {
+        min-width: auto;
+    }
+}
+ 

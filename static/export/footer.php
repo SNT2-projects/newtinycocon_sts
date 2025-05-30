@@ -1,3 +1,4 @@
+<footer>
 <div class="FormDI">
    <div class="DialogInsightFormDiv" id="divForm_DIForm_1390_775" style="display:none">
       <a name="divForm_DIForm_1390_775_globalErrors_anchor"></a><span class="FormDItitle">Suivez toute l'actualité studioSPORT</span>
@@ -82,3 +83,4 @@
        <a href="https://www.webetsolutions.com/" rel="nofollow" target="_blank">Agence :Agence Web et Solutions - Oasis e-commerce</a>
     </div>
 </div>
+</footer>
