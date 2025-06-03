@@ -732,3 +732,7 @@ img.DialogInsightFormSubmitLoader {
     text-decoration: none;
     margin-top: 10px;
 }
+
+article img {
+    width: 100%;
+}
