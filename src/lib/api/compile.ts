@@ -153,8 +153,11 @@ async function processImageUrls(html: string, coconImagesDir?: string): Promise<
 export async function compileAllContent(progressCallback?: (progress: number, total: number, stage: string) => void) {
   // Générer le nom du dossier d'export avec la date et l'heure actuelles
   const date = new Date();
+  // Ajuster pour le fuseau horaire local
+  date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
+  
   const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0'); 
   const year = date.getFullYear();
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
