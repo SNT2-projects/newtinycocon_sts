@@ -153,19 +153,18 @@ async function processImageUrls(html: string, coconImagesDir?: string): Promise<
 export async function compileAllContent(progressCallback?: (progress: number, total: number, stage: string) => void) {
   // Générer le nom du dossier d'export avec la date et l'heure actuelles
   const date = new Date();
-  // Ajuster pour le fuseau horaire local
-  date.setMinutes(date.getMinutes() + date.getTimezoneOffset());
+  // Forcer le fuseau horaire à Paris/France
+  const parisDate = new Date(date.toLocaleString('en-US', { timeZone: 'Europe/Paris' }));
   
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2, '0'); 
-  const year = date.getFullYear();
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  const seconds = String(date.getSeconds()).padStart(2, '0');
+  const day = String(parisDate.getDate()).padStart(2, '0');
+  const month = String(parisDate.getMonth() + 1).padStart(2, '0'); 
+  const year = parisDate.getFullYear();
+  const hours = String(parisDate.getHours()).padStart(2, '0');
+  const minutes = String(parisDate.getMinutes()).padStart(2, '0');
+  const seconds = String(parisDate.getSeconds()).padStart(2, '0');
   
   const exportDirName = `export-${day}-${month}-${year}_${hours}-${minutes}-${seconds}`;
   const exportDir = path.join(exportDirRoot, exportDirName);
-  
   // Assurez-vous que le dossier d'export existe
   if (!fs.existsSync(exportDirRoot)) {
     fs.mkdirSync(exportDirRoot, { recursive: true });
