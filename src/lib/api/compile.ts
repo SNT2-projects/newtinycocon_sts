@@ -150,6 +150,199 @@ async function processImageUrls(html: string, coconImagesDir?: string): Promise<
   return processedHtml;
 }
 
+// Fonction pour générer les sitemaps XML
+function generateSitemapXML(urls: Array<{
+  loc: string;
+  lastmod?: string;
+  changefreq?: string;
+  priority?: string;
+}>): string {
+  const urlEntries = urls.map(url => {
+    let urlEntry = `  <url>\n    <loc>${url.loc}</loc>`;
+    
+    if (url.lastmod) {
+      urlEntry += `\n    <lastmod>${url.lastmod}</lastmod>`;
+    }
+    
+    if (url.changefreq) {
+      urlEntry += `\n    <changefreq>${url.changefreq}</changefreq>`;
+    }
+    
+    if (url.priority) {
+      urlEntry += `\n    <priority>${url.priority}</priority>`;
+    }
+    
+    urlEntry += '\n  </url>';
+    return urlEntry;
+  }).join('\n');
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urlEntries}
+</urlset>`;
+}
+
+// Fonction pour générer un sitemap index XML
+function generateSitemapIndexXML(sitemaps: Array<{
+  loc: string;
+  lastmod?: string;
+}>): string {
+  const sitemapEntries = sitemaps.map(sitemap => {
+    let entry = `  <sitemap>\n    <loc>${sitemap.loc}</loc>`;
+    
+    if (sitemap.lastmod) {
+      entry += `\n    <lastmod>${sitemap.lastmod}</lastmod>`;
+    }
+    
+    entry += '\n  </sitemap>';
+    return entry;
+  }).join('\n');
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${sitemapEntries}
+</sitemapindex>`;
+}
+
+// Fonction pour formater une date au format ISO 8601 pour les sitemaps
+function formatDateForSitemap(dateString?: string): string {
+  if (!dateString) {
+    return new Date().toISOString().split('T')[0]; // Format YYYY-MM-DD
+  }
+  
+  try {
+    return new Date(dateString).toISOString().split('T')[0];
+  } catch {
+    return new Date().toISOString().split('T')[0];
+  }
+}
+
+// Fonction principale pour générer tous les sitemaps
+async function generateSitemaps(
+  exportDir: string,
+  coconGroups: CoconGroup[],
+  languages: Set<string>,
+  generatedFiles: Array<{
+    coconTitle: string;
+    coconSlug: string;
+    articleTitle: string;
+    language: string;
+    filePath: string;
+  }>,
+  contents: DirectusContent[]
+) {
+  const sitemapIndexes: Record<string, Array<{
+    loc: string;
+    lastmod: string;
+  }>> = {};
+
+  // Organiser les fichiers générés par langue et cocon
+  const filesByLanguageAndCocon: Record<string, Record<string, Array<{
+    coconTitle: string;
+    coconSlug: string;
+    articleTitle: string;
+    language: string;
+    filePath: string;
+  }>>> = {};
+
+  generatedFiles.forEach(file => {
+    if (!filesByLanguageAndCocon[file.language]) {
+      filesByLanguageAndCocon[file.language] = {};
+    }
+    
+    if (!filesByLanguageAndCocon[file.language][file.coconSlug]) {
+      filesByLanguageAndCocon[file.language][file.coconSlug] = [];
+    }
+    
+    filesByLanguageAndCocon[file.language][file.coconSlug].push(file);
+  });
+
+  // Générer les sitemaps par cocon pour chaque langue
+  for (const language of languages) {
+    const guidesDir = getGuidesTranslation(language);
+    
+    if (!sitemapIndexes[language]) {
+      sitemapIndexes[language] = [];
+    }
+
+    const coconsByLanguage = filesByLanguageAndCocon[language] || {};
+    
+    for (const [coconSlug, files] of Object.entries(coconsByLanguage)) {
+      // Créer les URLs pour ce cocon
+      const urls = files.map(file => {
+        // Extraire le nom du fichier sans l'extension
+        const fileName = path.basename(file.filePath, '.html');
+        const url = `${PRODUCTION_URL}/${language}/${guidesDir}/${coconSlug}/${fileName}.html`;
+        
+        // Trouver les informations du contenu pour les métadonnées
+        const content = contents.find((c: DirectusContent) => {
+          if (!c.article || !c.article.cocon) return false;
+          const contentLanguage = c.language.substring(0, 2).toLowerCase();
+          const contentCoconSlug = c.article.cocon.title.toLowerCase().replace(/\s+/g, '-');
+          const contentSlug = c.slug || c.article.title.toLowerCase().replace(/\s+/g, '-');
+          
+          return contentLanguage === language && 
+                 contentCoconSlug === coconSlug && 
+                 fileName === contentSlug;
+        });
+
+        return {
+          loc: url,
+          lastmod: formatDateForSitemap(content?.date_updated || content?.date_created),
+          changefreq: 'weekly',
+          priority: '0.8'
+        };
+      });
+
+      // Générer le sitemap XML pour ce cocon
+      const sitemapXML = generateSitemapXML(urls);
+      
+      // Écrire le sitemap dans le dossier du cocon
+      const coconDir = path.join(exportDir, language, guidesDir, coconSlug);
+      const sitemapPath = path.join(coconDir, 'sitemap.xml');
+      fs.writeFileSync(sitemapPath, sitemapXML);
+
+      // Ajouter ce sitemap à l'index global de la langue
+      const sitemapUrl = `${PRODUCTION_URL}/${language}/${guidesDir}/${coconSlug}/sitemap.xml`;
+      
+      // Utiliser la date la plus récente parmi tous les contenus du cocon
+      const latestDate = files.reduce((latest, file) => {
+        const content = contents.find((c: DirectusContent) => {
+          if (!c.article || !c.article.cocon) return false;
+          const contentLanguage = c.language.substring(0, 2).toLowerCase();
+          const contentCoconSlug = c.article.cocon.title.toLowerCase().replace(/\s+/g, '-');
+          return contentLanguage === language && contentCoconSlug === coconSlug;
+        });
+        
+        const fileDate = content?.date_updated || content?.date_created;
+        if (!fileDate) return latest;
+        
+        if (!latest || new Date(fileDate) > new Date(latest)) {
+          return fileDate;
+        }
+        
+        return latest;
+      }, null as string | null);
+
+      sitemapIndexes[language].push({
+        loc: sitemapUrl,
+        lastmod: formatDateForSitemap(latestDate || undefined)
+      });
+    }
+  }
+
+  // Générer les sitemaps index globaux pour chaque langue
+  for (const language of languages) {
+    const guidesDir = getGuidesTranslation(language);
+    const sitemapIndexXML = generateSitemapIndexXML(sitemapIndexes[language]);
+    
+    // Écrire le sitemap index dans le dossier guides de la langue
+    const languageGuidesDir = path.join(exportDir, language, guidesDir);
+    const indexPath = path.join(languageGuidesDir, 'sitemap.xml');
+    fs.writeFileSync(indexPath, sitemapIndexXML);
+  }
+}
+
 export async function compileAllContent(progressCallback?: (progress: number, total: number, stage: string) => void) {
   // Générer le nom du dossier d'export avec la date et l'heure actuelles
   const date = new Date();
@@ -354,6 +547,13 @@ export async function compileAllContent(progressCallback?: (progress: number, to
     fs.writeFileSync(path.join(assetsDir, 'style.css'), styleContent);
   }
   
+  // Générer les sitemaps
+  if (progressCallback) {
+    progressCallback(95, 100, 'Génération des sitemaps');
+  }
+  
+  await generateSitemaps(exportDir, coconGroups, languages, generatedFiles, contents);
+
   if (progressCallback) {
     progressCallback(100, 100, 'Export terminé');
   }
