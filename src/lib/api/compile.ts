@@ -272,7 +272,10 @@ async function generateSitemaps(
       const urls = files.map(file => {
         // Extraire le nom du fichier sans l'extension
         const fileName = path.basename(file.filePath, '.html');
-        const url = `${PRODUCTION_URL}/${language}/${guidesDir}/${coconSlug}/${fileName}.html`;
+        // Gestion spéciale pour le français - pas de préfixe de langue
+        const url = language === 'fr' 
+          ? `${PRODUCTION_URL}/${guidesDir}/${coconSlug}/${fileName}.html`
+          : `${PRODUCTION_URL}/${language}/${guidesDir}/${coconSlug}/${fileName}.html`;
         
         // Trouver les informations du contenu pour les métadonnées
         const content = contents.find((c: DirectusContent) => {
@@ -297,13 +300,17 @@ async function generateSitemaps(
       // Générer le sitemap XML pour ce cocon
       const sitemapXML = generateSitemapXML(urls);
       
-      // Écrire le sitemap dans le dossier du cocon
-      const coconDir = path.join(exportDir, language, guidesDir, coconSlug);
+      // Écrire le sitemap dans le dossier du cocon - Gestion spéciale pour le français
+      const coconDir = language === 'fr' 
+        ? path.join(exportDir, guidesDir, coconSlug)
+        : path.join(exportDir, language, guidesDir, coconSlug);
       const sitemapPath = path.join(coconDir, 'sitemap.xml');
       fs.writeFileSync(sitemapPath, sitemapXML);
 
       // Ajouter ce sitemap à l'index global de la langue
-      const sitemapUrl = `${PRODUCTION_URL}/${language}/${guidesDir}/${coconSlug}/sitemap.xml`;
+      const sitemapUrl = language === 'fr' 
+        ? `${PRODUCTION_URL}/${guidesDir}/${coconSlug}/sitemap.xml`
+        : `${PRODUCTION_URL}/${language}/${guidesDir}/${coconSlug}/sitemap.xml`;
       
       // Utiliser la date la plus récente parmi tous les contenus du cocon
       const latestDate = files.reduce((latest, file) => {
@@ -336,8 +343,10 @@ async function generateSitemaps(
     const guidesDir = getGuidesTranslation(language);
     const sitemapIndexXML = generateSitemapIndexXML(sitemapIndexes[language]);
     
-    // Écrire le sitemap index dans le dossier guides de la langue
-    const languageGuidesDir = path.join(exportDir, language, guidesDir);
+    // Écrire le sitemap index dans le dossier guides de la langue - Gestion spéciale pour le français
+    const languageGuidesDir = language === 'fr' 
+      ? path.join(exportDir, guidesDir)
+      : path.join(exportDir, language, guidesDir);
     const indexPath = path.join(languageGuidesDir, 'sitemap.xml');
     fs.writeFileSync(indexPath, sitemapIndexXML);
   }
@@ -499,7 +508,10 @@ export async function compileAllContent(progressCallback?: (progress: number, to
     const guidesDir = getGuidesTranslation(language);
     
     // Créer les dossiers nécessaires pour le cocon
-    const contentPath = path.join(exportDir, language, guidesDir, coconSlug);
+    // Gestion spéciale pour le français - pas de préfixe de langue
+    const contentPath = language === 'fr' 
+      ? path.join(exportDir, guidesDir, coconSlug)
+      : path.join(exportDir, language, guidesDir, coconSlug);
     fs.mkdirSync(contentPath, { recursive: true });
     
     // Créer le dossier images pour ce cocon spécifique
@@ -538,7 +550,10 @@ export async function compileAllContent(progressCallback?: (progress: number, to
   // Créer le dossier assets pour chaque langue et y copier le CSS
   for (const language of languages) {
     const guidesDir = getGuidesTranslation(language);
-    const assetsDir = path.join(exportDir, language, guidesDir, 'assets', 'css');
+    // Gestion spéciale pour le français - pas de préfixe de langue
+    const assetsDir = language === 'fr' 
+      ? path.join(exportDir, guidesDir, 'assets', 'css')
+      : path.join(exportDir, language, guidesDir, 'assets', 'css');
     if (!fs.existsSync(assetsDir)) {
       fs.mkdirSync(assetsDir, { recursive: true });
     }
@@ -581,7 +596,10 @@ async function generateHtml(content: DirectusContent, articleInfo?: { coconTitle
   const breadcrumb1 = coconTitle.toLowerCase().replace(/\s+/g, '-');
   // Utiliser le slug traduit du contenu pour breadcrumb2
   const breadcrumb2 = content.slug || articleTitle.toLowerCase().replace(/\s+/g, '-');
-  const url = `${PRODUCTION_URL}/${language}/${guidesDir}/${breadcrumb1}/${breadcrumb2}.html`;
+  // Gestion spéciale pour le français - pas de préfixe de langue
+  const url = language === 'fr' 
+    ? `${PRODUCTION_URL}/${guidesDir}/${breadcrumb1}/${breadcrumb2}.html`
+    : `${PRODUCTION_URL}/${language}/${guidesDir}/${breadcrumb1}/${breadcrumb2}.html`;
   
   // Préparer les méta-données
   const title = content.meta_title || content.title || articleTitle;
@@ -601,8 +619,10 @@ async function generateHtml(content: DirectusContent, articleInfo?: { coconTitle
       // Utiliser le slug traduit de chaque contenu pour les hreflang
       const hrefBreadcrumb2 = langInfo.content.slug || articleTitle.toLowerCase().replace(/\s+/g, '-');
       
-      // Construire l'URL complète
-      const langUrl = `${PRODUCTION_URL}/${langCode}/${langGuidesDir}/${hrefBreadcrumb1}/${hrefBreadcrumb2}.html`;
+      // Construire l'URL complète - Gestion spéciale pour le français
+      const langUrl = langCode === 'fr' 
+        ? `${PRODUCTION_URL}/${langGuidesDir}/${hrefBreadcrumb1}/${hrefBreadcrumb2}.html`
+        : `${PRODUCTION_URL}/${langCode}/${langGuidesDir}/${hrefBreadcrumb1}/${hrefBreadcrumb2}.html`;
       
       return `<link rel="alternate" hreflang="${langCode}" href="${langUrl}" />`;
     }).join('\n');
@@ -612,7 +632,10 @@ async function generateHtml(content: DirectusContent, articleInfo?: { coconTitle
     const defaultLang = articleInfo.languages[0].language;
     const defaultGuidesDir = getGuidesTranslation(defaultLang);
     const defaultBreadcrumb2 = articleInfo.languages[0].content.slug || articleTitle.toLowerCase().replace(/\s+/g, '-');
-    const defaultUrl = `${PRODUCTION_URL}/${defaultLang}/${defaultGuidesDir}/${breadcrumb1}/${defaultBreadcrumb2}.html`;
+    // Gestion spéciale pour le français dans l'URL par défaut
+    const defaultUrl = defaultLang === 'fr' 
+      ? `${PRODUCTION_URL}/${defaultGuidesDir}/${breadcrumb1}/${defaultBreadcrumb2}.html`
+      : `${PRODUCTION_URL}/${defaultLang}/${defaultGuidesDir}/${breadcrumb1}/${defaultBreadcrumb2}.html`;
     hreflangTags += `<link rel="alternate" hreflang="x-default" href="${defaultUrl}" />`;
   }
   
@@ -625,7 +648,12 @@ async function generateHtml(content: DirectusContent, articleInfo?: { coconTitle
     .replace(/\<\?php echo \$desc \?\>/g, description)
     .replace(/\<\?php echo \$url \?\>/g, url)
     .replace(/\<\?php echo \$breadcrumb1 \?\>/g, breadcrumb1)
-    .replace(/\<\?php echo \$breadcrumb2 \?\>/g, breadcrumb2);
+    .replace(/\<\?php echo \$breadcrumb2 \?\>/g, breadcrumb2)
+    // Ajuster les URLs de breadcrumb pour le français (sans préfixe de langue)
+    .replace(/https:\/\/www\.studiosport\.fr\/guides/g, 
+      language === 'fr' 
+        ? 'https://www.studiosport.fr/guides'
+        : `https://www.studiosport.fr/${language}/${guidesDir}`);
   
   // Remplacer les variables PHP dans le footer
   const footerWithVariables = footerHtml

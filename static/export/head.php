@@ -1,4 +1,4 @@
-<meta name="index, follow" />
+<meta name="robots" content="index,follow" />
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, user-scalable=no" />
 <link title="style studiosport" type="text/css" rel="stylesheet" href="../assets/content/style.css" />
