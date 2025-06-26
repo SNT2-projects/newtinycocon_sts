@@ -100,16 +100,22 @@ async function downloadImage(assetId: string, filename: string, coconImagesDir: 
 async function processImageUrls(html: string, coconImagesDir?: string): Promise<string> {
   if (!html) return '';
 
-  // Regex pour trouver les URLs d'images au format https://back.tinycocon.snt2.tech/assets/[id]
-  const imageUrlRegex = /https:\/\/back\.tinycocon\.snt2\.tech\/assets\/([a-zA-Z0-9-]+)/g;
+  // Regex améliorée pour trouver les URLs d'images complètes avec ou sans paramètres
+  // Capture : ID de l'asset, extension optionnelle, et paramètres optionnels
+  const imageUrlRegex = /https:\/\/back\.tinycocon\.snt2\.tech\/assets\/([a-zA-Z0-9-]+)(\.[a-zA-Z0-9]+)?(\?[^"\s<>]*)?/g;
   
-  // Collecter tous les IDs d'assets uniques
+  // Collecter tous les URLs complets et leurs IDs d'assets
+  const urlMappings = new Map<string, string>(); // fullUrl -> assetId
   const assetIds = new Set<string>();
   let match;
   
-  // Trouver tous les IDs d'assets dans le HTML
+  // Trouver tous les URLs complets et extraire les IDs d'assets
   while ((match = imageUrlRegex.exec(html)) !== null) {
-    assetIds.add(match[1]);
+    const fullUrl = match[0]; // URL complète avec paramètres
+    const assetId = match[1]; // ID de l'asset
+    
+    urlMappings.set(fullUrl, assetId);
+    assetIds.add(assetId);
   }
   
   // Créer un mapping des IDs d'assets vers les noms de fichiers
@@ -141,10 +147,14 @@ async function processImageUrls(html: string, coconImagesDir?: string): Promise<
   
   // Remplacer toutes les URLs d'images dans le HTML
   let processedHtml = html;
-  for (const [assetId, filename] of assetIdToFilename.entries()) {
-    const oldUrl = `https://back.tinycocon.snt2.tech/assets/${assetId}`;
-    const newUrl = `images/${filename}`;
-    processedHtml = processedHtml.replace(new RegExp(oldUrl.replace(/\//g, '\\/').replace(/\./g, '\\.'), 'g'), newUrl);
+  for (const [fullUrl, assetId] of urlMappings.entries()) {
+    const filename = assetIdToFilename.get(assetId);
+    if (filename) {
+      const newUrl = `images/${filename}`;
+      // Échapper les caractères spéciaux pour la regex de remplacement
+      const escapedUrl = fullUrl.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      processedHtml = processedHtml.replace(new RegExp(escapedUrl, 'g'), newUrl);
+    }
   }
   
   return processedHtml;
