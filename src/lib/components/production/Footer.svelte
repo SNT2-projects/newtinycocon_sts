@@ -152,12 +152,12 @@
     </ul>
     <ul>
       <li on:click={() => goTo('https://www.studiosport.fr/qui-sommes-nous.html')}>
-        Qui somme-nous ?
+        Qui sommes-nous ?
       </li>
     </ul>
     <ul>
       <li on:click={() => goTo('https://www.studiosport.fr/nos-guides-d-achat-m60387.html')}>
-        Toutes nos guides d'achats
+        Tous nos guides d'achat
       </li>
     </ul>
     <ul>

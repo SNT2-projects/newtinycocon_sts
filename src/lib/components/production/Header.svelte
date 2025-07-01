@@ -16,7 +16,7 @@
   <div class="headerStyle">
     <p class="contact">
       <span class="infoHeader" on:click={() => goTo('https://www.studiosport.fr/expeditions-et-retours.html')}>
-        Relais colis offert à partir de 79€ en France métropolitaine 
+        Relais colis offert à partir de 49€ en France métropolitaine 
       </span>| 
       <span class="infoHeader" on:click={() => goTo('https://www.studiosport.fr/devis-drone-camera-m60647.html')}>
         Demandez un devis
@@ -103,7 +103,7 @@
         <span>Univers caméras</span>
       </li>
       <li class="sprite-head s5" on:click={() => goTo('https://www.studiosport.fr/cameras/dslr-et-hybrides-c2476.html')}>
-        <span>Hybrides &amp; DSLR</span>
+        <span> Appareils photo</span>
       </li>
       <li class="sprite-head s6" on:click={() => goTo('https://www.studiosport.fr/stabilisateurs-pour-cameras-et-smartphone-m60585.html')}>
         <span>Stabilistateurs caméras</span>

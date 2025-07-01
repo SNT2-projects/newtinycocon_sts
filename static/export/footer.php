@@ -78,7 +78,6 @@
          <li>TVA IntraComm :FR02495049132</li>
       </ul>
    </div>
-   <p>Les sites du groupe SNT2 :SNT2.fr - OPS-store.fr - Blog.studioSPORT.fr - Abot.fr</p>
    <div class="agence">
        <a href="https://www.webetsolutions.com/" rel="nofollow" target="_blank">Agence :Agence Web et Solutions - Oasis e-commerce</a>
     </div>

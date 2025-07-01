@@ -1,6 +1,6 @@
 <header>
 <div class="headerStyle">
-   <p class="contact"><span class="infoHeader" onclick="window.location.href='https://www.studiosport.fr/expeditions-et-retours.html';">Relais colis offert à partir de 79€ en France métropolitaine </span>| <span class="infoHeader" onclick="window.location.href='https://www.studiosport.fr/devis-drone-camera-m60647.html';">Demandez un devis</span>| <span class="infoHeader" onclick="window.location.href='https://www.studiosport.fr/marques-m60682.html';">Toutes nos marques</span></p>
+   <p class="contact"><span class="infoHeader" onclick="window.location.href='https://www.studiosport.fr/expeditions-et-retours.html';">Relais colis offert à partir de 49€ en France métropolitaine </span>| <span class="infoHeader" onclick="window.location.href='https://www.studiosport.fr/devis-drone-camera-m60647.html';">Demandez un devis</span>| <span class="infoHeader" onclick="window.location.href='https://www.studiosport.fr/marques-m60682.html';">Toutes nos marques</span></p>
    <div class="headerRaw">
       <div class="logoHead"><img onclick="window.location.href='https://www.studiosport.fr/';" src="https://www.studiosport.fr/themes/html_1708/modeles/62/img/logo/logo_header_1.jpg" alt="Logo studiosport" class="img-responsive"></div>
       <div class="search">
