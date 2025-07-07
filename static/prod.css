@@ -188,6 +188,11 @@ aside {
     padding: 0 20px 0 10px
 }
 
+ /*
+ aside a {
+     padding-left: 18px
+ }
+*/
 
 aside a img {
     margin-top: 15px
