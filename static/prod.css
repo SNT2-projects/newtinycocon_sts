@@ -1,164 +1,469 @@
-.sprite-head:before,
-.accountCart .account:before,
-.accountCart .cart:before,
-.header_contact_mail:before,
-.header_contact_tel:before {
-    content: "";
-    display: inline-block
+/* Modern Header Styles */
+.modern-header {
+    width: 100%;
+    position: relative;
+    z-index: 1000;
 }
 
-.sprite-head:before,
-.accountCart .account:before,
-.accountCart .cart:before,
-.Head_rechBouton,
-.header_contact_mail:before,
-.header_contact_tel:before {
-    width: 30px;
-    height: 26px;
-    background: url('https://www.studiosport.fr/upload/image/-image-219721-moyenne.png') no-repeat;
-    margin: auto
-}
-
-.Head_rechBouton {
-    background-position: -420px 0;
-    border: none;
-    border-radius: 3px;
-    text-indent: -10000px;
+/* Bandeau informatif */
+.info-banner {
+    background: #262837;
+    color: white;
+    height: 40px;
     overflow: hidden;
-    cursor: pointer
+    position: relative;
 }
 
-.header_contact_mail:before,
-.header_contact_tel:before {
-    height: 20px
+.banner-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    white-space: nowrap;
+    padding: 0 20px;
 }
 
-.header_contact_mail:before {
-    background-position: -330px -5px
+.banner-item {
+    font-size: 14px;
+    font-family: 'Arial Black', 'Helvetica Bold', Arial, sans-serif;
+    font-weight: 900;
+    margin: 0 15px;
 }
 
-.header_contact_tel:before {
-    background-position: -300px -5px
+.banner-separator {
+    color: #666;
+    margin: 0 10px;
 }
 
-.s1:before {
-    background-position: -30px 0
+/* Header principal */
+.main-header {
+    background: white;
+    padding: 0;
 }
 
-.s2:before {
-    background-position: -60px 0
+.header-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    gap: 40px;
+    justify-content: space-between;
 }
 
-.s3:before {
-    background-position: -90px 0
-}
-
-.s4:before {
-    background-position: -120px 0
-}
-
-.s5:before {
-    background-position: -150px 0
-}
-
-.s6:before {
-    background-position: -180px 0
-}
-
-.s7:before {
-    background-position: -210px 0
-}
-
-.s8:before {
-    background-position: -240px 0
-}
-
-.s9:before {
-    background-position: -270px 0
-}
-
-.accountCart .account:before {
-    background-position: -360px 0
-}
-
-.accountCart .cart:before {
-    background-position: -390px 0
-}
-
-.s10:before {
-    background-position: -450px 0
-}
-
-nav ul,
-section {
-    max-width: 1250px;
-    margin: auto;
-    display: flex
-}
-
-li img,
-nav ul,
-section {
-    margin: auto
-}
-
-.accountCart,
-.choixNav,
-.headerRaw,
-nav ul,
-nav ul li,
-section {
-    display: flex
-}
-
-.btnForm,
-.choixNav a {
-    text-decoration: none
-}
-
-body {
-    font-family: Roboto, sans-serif;
-    color: #333;
-    text-align: justify;
-    margin: 0
-}
-
-.btnForm,
-nav ul li {
-    text-align: center;
-    cursor: pointer
-}
-
-nav {
-    margin-top: 5px;
-    background-color: #333
-}
-
-nav ul {
-    justify-content: space-around;
-    color: #fff;
-    list-style: none;
-    padding-left: 0
-}
-
-nav ul li {
-    flex: 1px;
-    font-size: 12px;
+/* Menu burger mobile */
+.mobile-menu-btn {
+    display: none;
     flex-direction: column;
-    justify-content: space-around
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    gap: 3px;
 }
 
-nav ul li:hover {
-    background-color: #22b1d1
+.mobile-menu-btn span {
+    width: 22px;
+    height: 2px;
+    background: #333;
+    transition: all 0.3s ease;
 }
 
-nav ul li span {
-    padding-bottom: 8px
+/* Logo */
+.logo-section {
+    flex-shrink: 0;
 }
 
-li img {
-    padding-top: 4px;
-    padding-bottom: 5px
+.logo {
+    cursor: pointer;
+    max-height: 100px;
+    max-width: 250px;
+}
+
+/* Barre de recherche */
+.search-section {
+    flex: 1;
+    max-width: 450px;
+    margin: 0 30px;
+}
+
+.search-form {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background: #f8f9fa;
+    border: 2px solid #e9ecef;
+    border-radius: 25px;
+    overflow: hidden;
+    transition: border-color 0.3s ease;
+}
+
+.search-form:focus-within {
+    border-color: #007bff;
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 12px 20px;
+    font-size: 14px;
+    outline: none;
+}
+
+.search-input::placeholder {
+    color: #6c757d;
+}
+
+.search-btn {
+    background: transparent;
+    border: none;
+    color: #333;
+    padding: 12px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease;
+}
+
+.search-btn:hover {
+    color: #000;
+}
+
+.search-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Actions utilisateur */
+.user-actions {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 8px;
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    position: relative;
+}
+
+.action-btn:hover {
+    color: #007bff;
+}
+
+.action-btn svg,
+.action-btn img {
+    width: 24px;
+    height: 24px;
+    margin-bottom: 4px;
+}
+
+.action-label {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.cart-btn {
+    position: relative;
+}
+
+.cart-badge {
+    position: absolute;
+    top: 0;
+    right: 5px;
+    background: #72b43e;
+    color: white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    font-size: 10px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Contact Dropdown */
+.contact-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.contact-popup {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 10px;
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    width: 320px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    pointer-events: none;
+}
+
+.contact-dropdown:hover .contact-popup {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.contact-popup-content {
+    padding: 20px;
+}
+
+/* Section Email */
+.contact-email-section {
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 15px;
+}
+
+.contact-title {
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 12px;
+}
+
+.contact-icon {
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    color: #FF5000;
+}
+
+.contact-services {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 15px 0;
+}
+
+.contact-services li {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 5px;
+    position: relative;
+    padding-left: 12px;
+}
+
+.contact-services li::before {
+    content: "•";
+    color: #FF5000;
+    position: absolute;
+    left: 0;
+}
+
+.contact-btn {
+    background: #FF5000;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    width: 100%;
+}
+
+.contact-btn:hover {
+    background: #e14500;
+}
+
+/* Section Téléphone */
+.contact-phone-section {
+    
+}
+
+.phone-number {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.phone-number .contact-icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+}
+
+.service-hours {
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.service-item {
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.service-name {
+    font-weight: 600;
+    color: #333;
+}
+
+.service-choice {
+    color: #FF5000;
+    font-weight: 600;
+}
+
+.service-time {
+    color: #666;
+    font-size: 10px;
+}
+
+/* Flèche de la popup */
+.contact-popup::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-bottom: 8px solid white;
+    z-index: 1001;
+}
+
+.contact-popup::after {
+    content: '';
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 9px solid transparent;
+    border-right: 9px solid transparent;
+    border-bottom: 9px solid #e5e5e5;
+    z-index: 1000;
+}
+
+/* Navigation principale */
+.main-nav {
+    background: white;
+    padding: 0;
+}
+
+.nav-container {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.nav-list {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 28px;
+    justify-content: center;
+}
+
+.nav-list li {
+    position: relative;
+}
+
+.nav-list a {
+    display: block;
+    padding: 15px 0;
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+    position: relative;
+}
+
+.nav-list a:hover {
+    color: #FF5000;
+}
+
+.nav-list a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: #FF5000;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+    opacity: 0;
+}
+
+.nav-list a:hover::after {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Boutons spéciaux */
+.promo-btn {
+    background: #FF5000 !important;
+    color: white !important;
+    padding: 10px 20px !important;
+    border-radius: 25px !important;
+    margin: 5px 0 !important;
+    border: 2px solid #FF5000 !important;
+    transition: all 0.3s ease !important;
+}
+
+.promo-btn:hover {
+    background: white !important;
+    color: #FF5000 !important;
+    border: 2px solid #FF5000 !important;
+}
+
+.promo-btn::after {
+    display: none !important;
+}
+
+.nouveau-btn {
+    background: #147CA0 !important;
+    color: white !important;
+    padding: 10px 20px !important;
+    border-radius: 25px !important;
+    margin: 5px 0 !important;
+    border: 2px solid #147CA0 !important;
+    transition: all 0.3s ease !important;
+}
+
+.nouveau-btn:hover {
+    background: white !important;
+    color: #147CA0 !important;
+    border: 2px solid #147CA0 !important;
+}
+
+.nouveau-btn::after {
+    display: none !important;
 }
 
 footer {
@@ -733,4 +1038,231 @@ img.DialogInsightFormSubmitLoader {
 .agence a {
     text-decoration: none;
     margin-top: 10px;
+}
+
+/* Menu mobile overlay */
+.mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.mobile-menu-content {
+    background: white;
+    width: 320px;
+    height: 100%;
+    overflow-y: auto;
+    padding: 0;
+    transform: translateX(-100%);
+    animation: slideIn 0.3s ease forwards;
+}
+
+@keyframes slideIn {
+    to {
+        transform: translateX(0);
+    }
+}
+
+.mobile-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.mobile-menu-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+}
+
+.close-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    color: #333;
+}
+
+.close-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.mobile-menu-list {
+    padding: 0;
+}
+
+.mobile-menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    text-decoration: none;
+    color: #333;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+.mobile-menu-item:hover {
+    background: #f8f9fa;
+}
+
+.mobile-menu-item svg {
+    width: 16px;
+    height: 16px;
+    color: #ff6b35;
+}
+
+.mobile-menu-footer {
+    padding: 20px;
+    border-top: 1px solid #e5e5e5;
+    margin-top: 20px;
+}
+
+.mobile-contact {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e5e5;
+    text-align: center;
+}
+
+.mobile-contact p {
+    margin: 5px 0;
+    font-size: 12px;
+    color: #666;
+}
+
+.mobile-contact a {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 12px;
+}
+
+/* Media queries responsive */
+@media screen and (max-width: 1024px) {
+    .nav-list {
+        gap: 20px;
+    }
+    
+    .nav-list a {
+        font-size: 13px;
+    }
+    
+    .user-actions {
+        gap: 10px;
+    }
+    
+    .action-label {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    /* Bandeau informatif mobile */
+    .info-banner {
+        height: 35px;
+    }
+    
+    .banner-item {
+        font-size: 12px;
+        font-family: 'Arial Black', 'Helvetica Bold', Arial, sans-serif;
+        font-weight: 900;
+        margin: 0 8px;
+    }
+    
+    .banner-separator {
+        margin: 0 6px;
+    }
+    
+    /* Header mobile */
+    .header-container {
+        padding: 10px 15px;
+        gap: 10px;
+    }
+    
+    .mobile-menu-btn {
+        display: flex;
+    }
+    
+    .logo {
+        height: 50px;
+    }
+    
+    .search-section {
+        display: none;
+    }
+    
+    .user-actions {
+        gap: 8px;
+    }
+    
+    .user-actions .contact-dropdown,
+    .user-actions .action-btn:nth-child(2) {
+        display: none;
+    }
+    
+    /* Masquer la popup contact sur mobile */
+    .contact-popup {
+        display: none !important;
+    }
+    
+    .action-btn svg,
+    .action-btn img {
+        width: 20px;
+        height: 20px;
+    }
+    
+    /* Navigation mobile */
+    .main-nav {
+        display: none;
+    }
+    
+    /* Ajustement des actions mobiles */
+    .user-actions .action-btn:last-child {
+        margin-left: 5px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .header-container {
+        padding: 8px 10px;
+        gap: 10px;
+    }
+    
+    .logo {
+        height: 45px;
+    }
+    
+    .user-actions {
+        gap: 5px;
+    }
+    
+    .mobile-menu-content {
+        width: 280px;
+    }
+    
+    .info-banner {
+        height: 30px;
+    }
+    
+    .banner-item {
+        font-size: 11px;
+        font-family: 'Arial Black', 'Helvetica Bold', Arial, sans-serif;
+        font-weight: 900;
+        margin: 0 6px;
+    }
+    
+    .banner-separator {
+        margin: 0 4px;
+    }
 }
