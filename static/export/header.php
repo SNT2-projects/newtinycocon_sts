@@ -1,11 +1,7 @@
 <header class="modern-header">
-  <!-- Bandeau défilant -->
-  <div class="scrolling-banner">
-    <div class="scrolling-banner-content" onmouseenter="this.style.animationPlayState='paused'" onmouseleave="this.style.animationPlayState='running'">
-      <span class="banner-item">
-        <span class="trustpilot-stars">★★★★★</span> Trustpilot
-      </span>
-      <span class="banner-separator">|</span>
+  <!-- Bandeau informatif -->
+  <div class="info-banner">
+    <div class="banner-content">
       <span class="banner-item">Stock en temps réel</span>
       <span class="banner-separator">|</span>
       <span class="banner-item">Revendeur DJI N°1 en France</span>
@@ -14,7 +10,7 @@
       <span class="banner-separator">|</span>
       <span class="banner-item">Expédition le jour même</span>
       <span class="banner-separator">|</span>
-      <span class="banner-item">Paiement en 3/4/10x jusqu'à 5000€</span>
+      <span class="banner-item">Service client et entrepôts en France</span>
     </div>
   </div>
 
@@ -48,7 +44,7 @@
             placeholder="Rechercher un produit, une marque..." 
             class="search-input"
             autocomplete="off"
-            data-positional="{&quot;on_right_side&quot;:false,&quot;left_side&quot;:605.6000366210938,&quot;right_side&quot;:865.6000366210938}"
+            data-positional='{"on_right_side":false,"left_side":605.6000366210938,"right_side":865.6000366210938}'
           />
           <button type="submit" class="search-btn" aria-label="Rechercher">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -61,41 +57,89 @@
 
       <!-- Actions utilisateur -->
       <div class="user-actions">
-        <button class="action-btn" onclick="window.location.href='http://support.studiosport.fr/';" aria-label="Contact">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-          </svg>
-          <span class="action-label">Contact</span>
-        </button>
+        <div class="contact-dropdown">
+          <button class="action-btn" onclick="window.location.href='http://support.studiosport.fr/';" aria-label="Contact">
+            <img width="40" height="40" fetchpriority="high" decoding="sync" loading="eager" alt="contact" src="https://www.studiosport.fr/themes/html_responsive/modeles/82/img/client/picto-contact.png">
+            <span class="action-label">Contact</span>
+          </button>
+          
+          <div class="contact-popup">
+            <div class="contact-popup-content">
+              <!-- Section Email -->
+              <div class="contact-email-section">
+                <div class="contact-title">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="contact-icon">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 1 0-2.636 6.364M16.5 12V8.25" />
+                  </svg>
+                  
+                  Contact email
+                </div>
+                <ul class="contact-services">
+                  <li>Service commercial, devis & SAV</li>
+                  <li>Réponse sous 24h (jours ouvrés)</li>
+                </ul>
+                <button class="contact-btn" onclick="window.location.href='http://support.studiosport.fr/';">
+                  Envoyer une demande
+                </button>
+              </div>
+
+              <!-- Section Téléphone -->
+              <div class="contact-phone-section">
+                <div class="phone-number">
+                  <svg class="contact-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                  </svg>
+                  02 35 00 30 00
+                </div>
+
+                <div class="service-hours">
+                  <div class="service-item">
+                    <span class="service-name">Service commercial :</span>
+                    <span class="service-choice">Choix #1</span>
+                    <span class="service-time">8h - 12h30 / 13h30 - 18h</span>
+                  </div>
+                  
+                  <div class="service-item">
+                    <span class="service-name">Service FPV & drones racers :</span>
+                    <span class="service-choice">Choix #2</span>
+                    <span class="service-time">8h30 - 12h / 14h - 17h30</span>
+                  </div>
+                  
+                  <div class="service-item">
+                    <span class="service-name">Service après-vente :</span>
+                    <span class="service-choice">Choix #3</span>
+                    <span class="service-time">9h30 - 12h30 / 13h30 - 17h</span>
+                  </div>
+                  
+                  <div class="service-item">
+                    <span class="service-name">Service administratif :</span>
+                    <span class="service-choice">Choix #4</span>
+                    <span class="service-time">10h - 12h30 / 13h30 - 17h</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         
         <button class="action-btn" onclick="window.location.href='https://www.studiosport.fr/';" aria-label="Boutiques">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-            <circle cx="12" cy="10" r="3"></circle>
-          </svg>
+          <img width="40" height="40" fetchpriority="high" decoding="sync" loading="eager" alt="boutiques" src="https://www.studiosport.fr/themes/html_responsive/modeles/82/img/client/picto-boutiques.png">
           <span class="action-label">Boutiques</span>
         </button>
         
         <button class="action-btn" onclick="window.location.href='https://www.studiosport.fr/dhtml/compte.php';" aria-label="Compte">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
+          <img width="40" height="40" src="https://studiosport.fr/themes/html_responsive/modeles/82/img/public/picto-compte.png" fetchpriority="high" decoding="sync" loading="eager" alt="compte">
           <span class="action-label">Compte</span>
         </button>
         
-        <button class="action-btn cart-btn" onclick="window.location.href='https://www.studiosport.fr/dhtml/panier.php';" aria-label="Panier">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="9" cy="21" r="1"></circle>
-            <circle cx="20" cy="21" r="1"></circle>
-            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-          </svg>
+        <button class="action-btn cart-btn" onclick="window.location.href='https://www.studiosport.fr/';" aria-label="Panier">
+          <img width="40" height="40" src="https://studiosport.fr/themes/html_responsive/modeles/82/img/public/picto-panier.png" fetchpriority="high" decoding="sync" loading="eager" alt="panier">
           <span class="cart-badge">0</span>
           <span class="action-label">Panier</span>
         </button>
       </div>
-         </div>
-      </div>
+    </div>
+  </div>
 
   <!-- Navigation principale -->
   <nav class="main-nav">
@@ -190,7 +234,7 @@
         <a href="https://www.studiosport.fr/drones-modelisme-multirotors-dji-c-30_360.html" class="mobile-menu-item">
           DJI
         </a>
-         </div>
+      </div>
       
       <div class="mobile-menu-footer">
         <a href="https://www.studiosport.fr/dhtml/compte.php" class="mobile-menu-item">
@@ -203,7 +247,7 @@
             <polyline points="9,18 15,12 9,6"></polyline>
           </svg>
         </a>
-        <a href="#" class="mobile-menu-item">
+        <a href="https://www.studiosport.fr/favoris/" class="mobile-menu-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
           </svg>
@@ -212,11 +256,11 @@
         <div class="mobile-contact">
           <p><strong>02 35 00 30 00</strong></p>
           <p>Du lundi au vendredi, de 8h à 18h</p>
-          <a href="#">Voir nos boutiques</a>
-            </div>
-         </div>
+          <a href="https://www.studiosport.fr/boutiques/">Voir nos boutiques</a>
+        </div>
       </div>
-   </div>
+    </div>
+  </div>
 </header>
 
 <script>
