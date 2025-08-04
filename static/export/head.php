@@ -3,6 +3,7 @@
 <meta name="viewport" content="width=device-width, user-scalable=no" />
 <link title="style studiosport" type="text/css" rel="stylesheet" href="../assets/content/style.css" />
 <link rel="stylesheet" media="screen" href="https://fontlibrary.org//face/bebasneueregular" type="text/css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <title><?php echo $title ?></title>
 <meta name="description" content="<?php echo $desc ?>">
 <meta property="og:locale" content="fr_FR">

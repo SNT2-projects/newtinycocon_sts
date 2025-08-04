@@ -42,7 +42,7 @@
             <li on:click={() => goTo('https://www.studiosport.fr/avis-client-studiosport.html')}>
               Nos clients parlent de nous
             </li>
-            <li on:click={() => goTo('http://blog.studiosport.fr/')}>
+            <li on:click={() => goTo('https://blog.studiosport.fr/')}>
               Le blog studioSPORT
             </li>
           </ul>
@@ -124,16 +124,16 @@
 
       <!-- Logo et réseaux sociaux -->
       <div class="footer-social">
-        <div class="flex">
+        <div class="footer-social-wrapper">
           <div>
             <img
+            width="240" height="70"
             src="https://www.studiosport.fr/upload/image/-image-278536-grande.png?1751553812"
             alt="Logo studioSPORT"
             class="footer-logo"
           />
           </div>
-          <div>
-
+          <div class="right">
             <div class="social-links">
               <a href="https://www.facebook.com/studiosportfrance" target="_blank" rel="noopener">
                 <i class="fa fa-facebook-square"></i>

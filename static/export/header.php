@@ -127,7 +127,7 @@
           <span class="action-label">Boutiques</span>
         </button>
         
-        <button class="action-btn" onclick="window.location.href='https://www.studiosport.fr/dhtml/compte.php';" aria-label="Compte">
+        <button class="action-btn" onclick="window.location.href='https://www.studiosport.fr/dhtml/acces.php';" aria-label="Compte">
           <img width="40" height="40" src="https://studiosport.fr/themes/html_responsive/modeles/82/img/public/picto-compte.png" fetchpriority="high" decoding="sync" loading="eager" alt="compte">
           <span class="action-label">Compte</span>
         </button>
@@ -147,15 +147,15 @@
       <ul class="nav-list">
         <li><a href="https://www.studiosport.fr/drones-modelisme-c-30.html">DRONES</a></li>
         <li><a href="https://www.studiosport.fr/drones-racer-m60281.html">DRONES FPV</a></li>
-        <li><a href="https://www.studiosport.fr/materiel-professionnel-drones-et-cameras-m60358.html">DRONES PRO</a></li>
+        <li><a href="https://www.studiosport.fr/drones-professionnels-c2557.html">DRONES PRO</a></li>
         <li><a href="https://www.studiosport.fr/univers-cameras/">CAMÉRAS</a></li>
-        <li><a href="https://www.studiosport.fr/cameras/dslr-et-hybrides-c2476.html">APPAREILS PHOTO</a></li>
+        <li><a href="https://www.studiosport.fr/appareils-photo-c2476.html">APPAREILS PHOTO</a></li>
         <li><a href="https://www.studiosport.fr/stabilisateurs-pour-cameras-et-smartphone-m60585.html">STABILISATEURS</a></li>
         <li><a href="https://www.studiosport.fr/batteries-nomades-c3598.html">BATTERIES NOMADES</a></li>
         <li><a href="https://www.studiosport.fr/les-promotions-du-moment-m61245.html" class="promo-btn">PROMOS</a></li>
         <li><a href="https://www.studiosport.fr/toutes-nos-nouveautes/" class="nouveau-btn">NOUVEAU</a></li>
         <li><a href="https://www.studiosport.fr/marques-m60682.html">MARQUES</a></li>
-        <li><a href="https://www.studiosport.fr/drones-modelisme-multirotors-dji-c-30_360.html">DJI</a></li>
+        <li><a href="https://www.studiosport.fr/dji/">DJI</a></li>
       </ul>
     </div>
   </nav>
@@ -186,7 +186,7 @@
             <polyline points="9,18 15,12 9,6"></polyline>
           </svg>
         </a>
-        <a href="https://www.studiosport.fr/materiel-professionnel-drones-et-cameras-m60358.html" class="mobile-menu-item">
+        <a href="https://www.studiosport.fr/drones-professionnels-c2557.html" class="mobile-menu-item">
           Drones Pro
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="9,18 15,12 9,6"></polyline>
@@ -198,7 +198,7 @@
             <polyline points="9,18 15,12 9,6"></polyline>
           </svg>
         </a>
-        <a href="https://www.studiosport.fr/cameras/dslr-et-hybrides-c2476.html" class="mobile-menu-item">
+        <a href="https://www.studiosport.fr/appareils-photo-c2476.html" class="mobile-menu-item">
           Appareils photo
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="9,18 15,12 9,6"></polyline>
@@ -231,13 +231,13 @@
             <polyline points="9,18 15,12 9,6"></polyline>
           </svg>
         </a>
-        <a href="https://www.studiosport.fr/drones-modelisme-multirotors-dji-c-30_360.html" class="mobile-menu-item">
+        <a href="https://www.studiosport.fr/dji/" class="mobile-menu-item">
           DJI
         </a>
       </div>
       
       <div class="mobile-menu-footer">
-        <a href="https://www.studiosport.fr/dhtml/compte.php" class="mobile-menu-item">
+        <a href="https://www.studiosport.fr/dhtml/acces.php" class="mobile-menu-item">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
             <circle cx="12" cy="7" r="4"></circle>
