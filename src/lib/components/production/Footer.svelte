@@ -28,7 +28,7 @@
       <div class="footer-columns">
         <!-- Colonne studioSPORT -->
         <div class="footer-column">
-          <h3>studioSPORT</h3>
+          <span class="foot_menu_group">studioSPORT</span>
           <ul>
             <li on:click={() => goTo('https://www.studiosport.fr/qui-sommes-nous.html')}>
               L'équipe studioSPORT
@@ -50,7 +50,7 @@
 
         <!-- Colonne Services -->
         <div class="footer-column">
-          <h3>Services</h3>
+          <span class="foot_menu_group">Services</span>
           <ul>
             <li on:click={() => goTo('https://www.studiosport.fr/modes-paiements.html')}>
               Paiements
@@ -69,7 +69,7 @@
 
         <!-- Colonne Besoin d'aide -->
         <div class="footer-column">
-          <h3>Besoin d'aide ?</h3>
+          <span class="foot_menu_group">Besoin d'aide ?</span>
           <ul>
             <li on:click={() => goTo('https://www.studiosport.fr/foire-aux-questions-faq-m62960.html')}>
               Foire aux questions (FAQ)
@@ -85,7 +85,7 @@
 
         <!-- Colonne Marques -->
         <div class="footer-column">
-          <h3>Marques</h3>
+          <span class="foot_menu_group">Marques</span>
           <ul>
             <li on:click={() => goTo('https://www.studiosport.fr/dji/')}>DJI</li>
             <li on:click={() => goTo('https://www.studiosport.fr/gopro/')}>GoPro</li>
@@ -98,7 +98,7 @@
 
         <!-- Colonne Produits -->
         <div class="footer-column">
-          <h3>Produits</h3>
+          <span class="foot_menu_group">Produits</span>
           <ul>
             <li on:click={() => goTo('https://www.studiosport.fr/drones-modelisme-c-30.html')}>
               Drones
