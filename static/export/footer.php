@@ -3,96 +3,100 @@
    <div class="footer-main">
       <div class="footer-container">
          <div class="footer-columns">
-            <!-- Colonne studioSPORT -->
+            <!-- Colonne Univers produit -->
             <div class="footer-column">
-               <span class="foot_menu_group">studioSPORT</span>
-               <ul>
-                  <li onclick="window.location.href='https://www.studiosport.fr/qui-sommes-nous.html';">L'équipe studioSPORT</li>
-                  <li onclick="window.location.href='https://www.studiosport.fr/nos-boutiques.html';">Nos boutiques</li>
-                  <li onclick="window.location.href='https://www.studiosport.fr/rejoindre-notre-equipe-m60562.html';">Rejoindre notre équipe</li>
-                  <li onclick="window.location.href='https://www.studiosport.fr/avis-client-studiosport.html';">Nos clients parlent de nous</li>
-                  <li onclick="window.location.href='https://blog.studiosport.fr/';">Le blog studioSPORT</li>
-               </ul>
-            </div>
-
-            <!-- Colonne Services -->
-            <div class="footer-column">
-               <span class="foot_menu_group">Services</span>
-               <ul>
-                  <li onclick="window.location.href='https://www.studiosport.fr/modes-paiements.html';">Paiements</li>
-                  <li onclick="window.location.href='https://www.studiosport.fr/expeditions-et-retours.html';">Expéditions et retours</li>
-                  <li onclick="window.location.href='https://www.studiosport.fr/atelier-sav-reparation-drone.html';">Notre Atelier SAV et réparation drone</li>
-                  <li onclick="window.location.href='https://www.studiosport.fr/demandez-un-devis-drone-ou-camera.html';">Demandez un devis drone ou caméra</li>
-               </ul>
-            </div>
-
-            <!-- Colonne Besoin d'aide -->
-            <div class="footer-column">
-               <span class="foot_menu_group">Besoin d'aide ?</span>
-               <ul>
-                  <li onclick="window.location.href='https://www.studiosport.fr/foire-aux-questions-faq-m62960.html';">Foire aux questions (FAQ)</li>
-                  <li onclick="window.location.href='https://www.studiosport.fr/nos-guides-d-achat-m60387.html';">Tous nos guides d'achats</li>
-                  <li onclick="window.location.href='https://support.studiosport.fr/';">Nous contacter</li>
-               </ul>
-            </div>
-
-            <!-- Colonne Marques -->
-            <div class="footer-column">
-               <span class="foot_menu_group">Marques</span>
-               <ul>
-                  <li onclick="window.location.href='https://www.studiosport.fr/dji/';">DJI</li>
-                  <li onclick="window.location.href='https://www.studiosport.fr/gopro/';">GoPro</li>
-                  <li onclick="window.location.href='https://www.studiosport.fr/sony/';">Sony</li>
-                  <li onclick="window.location.href='https://www.studiosport.fr/canon/';">Canon</li>
-                  <li onclick="window.location.href='https://www.studiosport.fr/nikon/';">Nikon</li>
-                  <li onclick="window.location.href='https://www.studiosport.fr/insta360/';">Insta360</li>
-               </ul>
-            </div>
-
-            <!-- Colonne Produits -->
-            <div class="footer-column">
-               <span class="foot_menu_group">Produits</span>
+               <span class="foot_menu_group">Univers produit</span>
                <ul>
                   <li onclick="window.location.href='https://www.studiosport.fr/drones-modelisme-c-30.html';">Drones</li>
-                  <li onclick="window.location.href='https://www.studiosport.fr/drones-fpv/';">Drones FPV</li>
-                  <li onclick="window.location.href='https://www.studiosport.fr/cameras/';">Caméras</li>
-                  <li onclick="window.location.href='https://www.studiosport.fr/appareils-photo/';">Appareils photo</li>
-                  <li onclick="window.location.href='https://www.studiosport.fr/stabilisateurs-camera/';">Stabilisateurs caméra</li>
-                  <li onclick="window.location.href='https://www.studiosport.fr/batteries-nomades/';">Batteries nomades</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/dji/';">Drones DJI</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/drones-racer-m60281.html';">Drones FPV</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/appareils-photo-c2476.html';">Appareils photo &amp; caméras vidéo</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/cameras/cameras-sport-et-360-c4358.html';">Caméras sport &amp; 360</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/stabilisateurs-pour-cameras-et-smartphone.html';">Stabilisateurs</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/accessoires-fixations-accessoires-audio-c-25_274.html';">Microphones</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/accessoires-c4457.html';">Tous les accessoires</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/marques-m60682.html';">Toutes nos marques</li>
+               </ul>
+            </div>
+
+            <!-- Colonne Pages pratiques -->
+            <div class="footer-column">
+               <span class="foot_menu_group">Pages pratiques</span>
+               <ul>
+                  <li onclick="window.location.href='https://www.studiosport.fr/nos-guides-dachat-m60387.html';">Guides d'achat</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/foire-aux-questions-faq-m62960.html';">Foire aux questions (F.A.Q)</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/nos-horaires-et-coordonnees-m10016.html';">Horaires &amp; cordonnées</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/atelier-sav-reparation-drone.html';">Service après vente (S.A.V)</li>
+                  <li onclick="window.location.href='https://support.studiosport.fr/';">Contact</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/expeditions-et-retours.html';">Livraison &amp; retours</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/modes-paiements.html';">Paiement</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/devis-drone-camera-m60647.html';">Demander un devis</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/securite-des-donnees-studiosport-m64254.html';">Sécurité des données</li>
+               </ul>
+            </div>
+
+            <!-- Colonne Groupe studioSPORT -->
+            <div class="footer-column">
+               <span class="foot_menu_group">Groupe studioSPORT</span>
+               <ul>
+                  <li onclick="window.location.href='https://www.studiosport.fr/qui-sommes-nous.html';">Qui sommes-nous ?</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/rejoindre-notre-equipe-m60562.html';">Rejoindre l'équipe</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/nos-boutiques-m66733.html';">Nos boutiques en France</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/boutique-studiosport-boulogne-billancourt-m66598.html';">Boutique studioSPORT Boulogne Billancourt</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/drones-fpv/atelier-fpv-studiosport-c2403.html';">L’Atelier FPV studioSPORT</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/conception-recherche-montage.html';">Bureau d’études ABOT</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/avis-client-studiosport.html';">Avis clients</li>
+               </ul>
+            </div>
+
+            <!-- Colonne Tendances -->
+            <div class="footer-column">
+               <span class="foot_menu_group">Tendances</span>
+               <ul>
+                  <li onclick="window.location.href='https://www.studiosport.fr/cameras/cameras-dji/osmo-360-2-c4370.html';">DJI Osmo 360 II</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/cameras-amp-appareils-photo/cameras-insta360/x6-c4497.html';">Insta360 X6</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/cameras/cameras-dji/osmo-pocket-4p-c4366.html';">DJI Osmo Pocket 4P</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/cameras/dji/osmo-pocket-4-c4224.html';">DJI Osmo Pocket 4</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/drones/drones-dji/lito-c4229.html';">DJI Lito 1 &amp; DJI Lito X1</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/cameras/gopro/hero-13-c4381.html';">GoPro Hero 13</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/insta360-x4-air-m67933.html';">Insta360 X4 Air</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/stabilisateurs-camera/stabilisateurs-dji/rs-5-c4192.html';">DJI RS5</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/drones/antigravity-c4196.html';">Antigravity A1</li>
+                  <li onclick="window.location.href='https://www.studiosport.fr/cameras/insta360/luna-ultra-c4490.html';">Insta360 Luna Ultra</li>
                </ul>
             </div>
          </div>
+      </div>
+   </div>
 
-         <!-- Logo et réseaux sociaux -->
-         <div class="footer-social">
-            <div class="footer-social-wrapper">
-               <div>
-                  <img width="240" height="70" src="https://www.studiosport.fr/upload/image/-image-278536-grande.png?1751553812" alt="Logo studioSPORT" class="footer-logo" />
-               </div>
-               <div class="right">
-                  <div class="social-links">
-                     <a href="https://www.facebook.com/studiosportfrance" target="_blank" rel="noopener">
-                        <i class="fa fa-facebook-square"></i>
-                     </a>
-                     <a href="https://www.instagram.com/studiosportfrance" target="_blank" rel="noopener">
-                        <i class="fa fa-instagram"></i>
-                     </a>
-                     <a href="https://www.tiktok.com/@studiosportfrance" target="_blank" rel="noopener">
-                        <img width="32" height="32" src="https://www.studiosport.fr/upload/image/-image-278534-grande.png?1751553790" alt="TikTok">
-                     </a>
-                     <a href="https://www.youtube.com/studiosportfrance" target="_blank" rel="noopener">
-                        <i class="fa fa-youtube-play"></i>
-                     </a>
-                     <a href="https://twitter.com/studiosportfr" target="_blank" rel="noopener">
-                        <img width="32" height="32" src="https://www.studiosport.fr/upload/image/-image-278535-grande.png?1751553801" alt="X">
-                     </a>
-                     <a href="https://www.linkedin.com/company/studiosport" target="_blank" rel="noopener">
-                        <i class="fa fa-linkedin"></i>
-                     </a>
-                  </div>
-                  <p class="community-text">Rejoignez notre communauté de passionnés de drones et caméras</p>
-               </div>
+   <!-- Logo et réseaux sociaux -->
+   <div class="footer-social">
+      <div class="footer-social-wrapper">
+         <div>
+            <img width="240" height="70" src="https://www.studiosport.fr/upload/image/-image-278536-grande.png?1751553812" alt="Logo studioSPORT" class="footer-logo" />
+         </div>
+         <div class="right">
+            <div class="social-links">
+               <a href="https://www.facebook.com/studiosportfrance" target="_blank" rel="noopener">
+                  <i class="fa fa-facebook-square"></i>
+               </a>
+               <a href="https://www.instagram.com/studiosportfrance" target="_blank" rel="noopener">
+                  <i class="fa fa-instagram"></i>
+               </a>
+               <a href="https://www.tiktok.com/@studiosportfrance" target="_blank" rel="noopener">
+                  <img width="32" height="32" src="https://www.studiosport.fr/upload/image/-image-278534-grande.png?1751553790" alt="TikTok">
+               </a>
+               <a href="https://www.youtube.com/studiosportfrance" target="_blank" rel="noopener">
+                  <i class="fa fa-youtube-play"></i>
+               </a>
+               <a href="https://twitter.com/studiosportfr" target="_blank" rel="noopener">
+                  <img width="32" height="32" src="https://www.studiosport.fr/upload/image/-image-278535-grande.png?1751553801" alt="X">
+               </a>
+               <a href="https://www.linkedin.com/company/studiosport" target="_blank" rel="noopener">
+                  <i class="fa fa-linkedin"></i>
+               </a>
             </div>
+            <p class="community-text">Rejoignez notre communauté de passionnés de drones et caméras</p>
          </div>
       </div>
    </div>
@@ -101,19 +105,21 @@
    <div class="footer-legal">
       <div class="footer-legal-container">
          <div class="legal-links">
-            <span onclick="window.location.href='https://www.studiosport.fr/plan-du-site.html'" style="cursor:pointer;">Plan du site</span>
-            <span>|</span>
-            <span onclick="window.location.href='https://www.studiosport.fr/mentions-legales.html'" style="cursor:pointer;">Mentions légales</span>
-            <span>|</span>
-            <span onclick="window.location.href='https://www.studiosport.fr/mentions-legales.html'" style="cursor:pointer;">Politique de Confidentialité</span>
-            <span>|</span>
-            <span onclick="window.location.href='https://www.studiosport.fr/conditions-generales-de-vente.html'" style="cursor:pointer;">Conditions Générales de Vente</span>
+            <span class="legal-link" onclick="window.location.href='https://www.studiosport.fr/plan-du-site.html';">Plan du site</span>
+            <span class="legal-sep">|</span>
+            <span class="legal-link" onclick="window.location.href='https://www.studiosport.fr/mentions-legales.html';">Mentions légales</span>
+            <span class="legal-sep">|</span>
+            <span class="legal-link" onclick="window.location.href='https://www.studiosport.fr/mentions-legales.html';">Politique de confidentialité</span>
+            <span class="legal-sep">|</span>
+            <span class="legal-link" onclick="if (window.Didomi) Didomi.preferences.show();">Cookies</span>
+            <span class="legal-sep">|</span>
+            <span class="legal-link" onclick="window.location.href='https://www.studiosport.fr/conditions-generales-de-vente.html';">Conditions Générales de Vente</span>
          </div>
          <div class="legal-info">
             <p>Entreprise certifiée ISO 9001 - SIRET : 49504913200105 - TVA IntraComm : FR02495049132 - © studioSPORT 2007-<?= date('Y') ?></p>
          </div>
          <div class="legal-partner">
-            <p>Propulsé par - OASIS Commerce</p>
+            <p><span onclick="window.open('https://www.oasis-projet.com', '_blank');">Propulsé par</span> - <span onclick="window.open('https://www.oasis-commerce.com', '_blank');">OASIS Commerce</span></p>
          </div>
       </div>
    </div>

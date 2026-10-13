@@ -1,16 +1,31 @@
 <header class="modern-header">
   <!-- Bandeau informatif -->
   <div class="info-banner">
-    <div class="banner-content">
-      <span class="banner-item">Stock en temps réel</span>
-      <span class="banner-separator">|</span>
-      <span class="banner-item">Revendeur DJI N°1 en France</span>
-      <span class="banner-separator">|</span>
-      <span class="banner-item">Livraison offerte dès 49€ d'achat</span>
-      <span class="banner-separator">|</span>
-      <span class="banner-item">Expédition le jour même</span>
-      <span class="banner-separator">|</span>
-      <span class="banner-item">Service client et entrepôts en France</span>
+    <div class="banner-track">
+      <div class="banner-group">
+        <span class="banner-item">Stock en temps réel</span>
+        <span class="banner-item">Revendeur DJI N°1 en France</span>
+        <span class="banner-item">Livraison offerte dès 49€ d'achat</span>
+        <span class="banner-item">Expédition le jour même</span>
+        <span class="banner-item">Paiement en x3 / x4 / x10 via ALMA</span>
+        <span class="banner-item">Service client et entrepôts en France</span>
+      </div>
+      <div class="banner-group" aria-hidden="true">
+        <span class="banner-item">Stock en temps réel</span>
+        <span class="banner-item">Revendeur DJI N°1 en France</span>
+        <span class="banner-item">Livraison offerte dès 49€ d'achat</span>
+        <span class="banner-item">Expédition le jour même</span>
+        <span class="banner-item">Paiement en x3 / x4 / x10 via ALMA</span>
+        <span class="banner-item">Service client et entrepôts en France</span>
+      </div>
+      <div class="banner-group" aria-hidden="true">
+        <span class="banner-item">Stock en temps réel</span>
+        <span class="banner-item">Revendeur DJI N°1 en France</span>
+        <span class="banner-item">Livraison offerte dès 49€ d'achat</span>
+        <span class="banner-item">Expédition le jour même</span>
+        <span class="banner-item">Paiement en x3 / x4 / x10 via ALMA</span>
+        <span class="banner-item">Service client et entrepôts en France</span>
+      </div>
     </div>
   </div>
 

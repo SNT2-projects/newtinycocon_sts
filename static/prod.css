@@ -1,3 +1,6 @@
+/* Prévisualisation uniquement : la police de studiosport.fr est bloquée (CORS) hors de son domaine, on charge la même via Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@700&display=swap');
+
 /* Modern Header Styles */
 .modern-header {
     width: 100%;
@@ -5,33 +8,64 @@
     z-index: 1000;
 }
 
-/* Bandeau informatif */
+/* Bandeau informatif défilant (réplique du bandeau studiosport.fr) */
 .info-banner {
-    background: #262837;
-    color: white;
-    height: 40px;
+    background: #242938;
+    color: #fff;
+    padding: 6px 0;
     overflow: hidden;
     position: relative;
 }
 
-.banner-content {
+.banner-track {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100%;
-    white-space: nowrap;
-    padding: 0 20px;
+    width: max-content;
+    animation: banner-scroll 28s linear infinite;
+}
+
+.info-banner:hover .banner-track {
+    animation-play-state: paused;
+}
+
+.banner-group {
+    display: flex;
+    flex-shrink: 0;
 }
 
 .banner-item {
-    font-size: 14px;
-    font-weight: 600;
-    margin: 0 15px;
+    flex-shrink: 0;
+    padding: 0 50px;
+    border-right: 1px solid #fff;
+    font-family: 'Bai Jamjuree', Arial, sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+    line-height: 24px;
+    white-space: nowrap;
 }
 
-.banner-separator {
-    color: #666;
-    margin: 0 10px;
+@keyframes banner-scroll {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-33.3333%);
+    }
+}
+
+@media (max-width: 1024px) {
+    .banner-item {
+        padding: 0 15px;
+    }
+
+    .banner-track {
+        animation-duration: 22s;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .banner-track {
+        animation: none;
+    }
 }
 
 /* Header principal */
@@ -737,22 +771,20 @@ footer hr {
 
 /* Logo et réseaux sociaux */
 .footer-social {
-    text-align: center;
-    padding-top: 40px;
-    width: 100%;
-    max-width: 1000px;
+    border-top: 1px solid #323747;
+    border-bottom: 1px solid #323747;
+    padding: 15px 20px;
 }
 
 .footer-logo {
-    margin-bottom: 20px;
-    opacity: 0.8;
+    display: block;
 }
 
 .social-links {
     display: flex;
     justify-content: flex-end;
-    gap: 20px;
-    margin-bottom: 20px;
+    gap: 22px;
+    margin-bottom: 10px;
 }
 
 .footer-social-wrapper {
@@ -760,6 +792,8 @@ footer hr {
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
 }
 
 .footer-social-wrapper .right {
@@ -783,19 +817,19 @@ footer hr {
 }
 
 .social-links i {
-    font-size: 24px;
+    font-size: 30px;
     color: #FF5000;
 }
 
 .social-links img {
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
     filter: brightness(0) saturate(100%) invert(39%) sepia(94%) saturate(3094%) hue-rotate(2deg) brightness(105%) contrast(106%);
 }
 
 .community-text {
     color: #fff;
-    font-size: 0.75rem;
+    font-size: 14px;
     margin: 0;
     flex-wrap: wrap;
     text-align: right;
@@ -804,7 +838,7 @@ footer hr {
 /* Footer légal */
 .footer-legal {
     background: #242938;
-    padding: 20px 0;
+    padding: 20px 0 15px;
 }
 
 .footer-legal-container {
@@ -815,23 +849,24 @@ footer hr {
 }
 
 .legal-links {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
-.legal-links a {
+.legal-links .legal-link {
     color: #fff;
-    font-size: 1rem;
-    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
     transition: color 0.3s ease;
 }
 
-.legal-links a:hover {
+.legal-links .legal-link:hover {
     color: #ccc;
 }
 
-.legal-links span {
+.legal-links .legal-sep {
     color: #FF5000;
-    margin: 0 10px;
+    font-size: 14px;
+    margin: 0 25px;
 }
 
 .legal-info p,
@@ -841,13 +876,17 @@ footer hr {
 
 .legal-info p {
     color: #FF5000;
-    font-size: 0.8rem;
-
+    font-size: 12px;
+    margin-bottom: 25px;
 }
 
 .legal-partner p {
     color: #fff;
-    font-size: 0.65rem;
+    font-size: 11px;
+}
+
+.legal-partner span {
+    cursor: pointer;
 }
 
 
@@ -1291,44 +1330,45 @@ img.DialogInsightFormSubmitLoader {
 /* Contenu principal du footer */
 .footer-main {
     background: #242938;
-    padding: 60px 0 40px;
+    padding: 40px 20px;
 }
 
 .footer-container {
     margin: 0 auto;
-    padding: 0 20px;
     display: flex;
     justify-content: center;
-    align-items: center;
-    flex-direction: column;
 }
 
 .footer-columns {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 40px;
-    margin-bottom: 60px;
+    grid-template-columns: repeat(4, 288px);
+    justify-content: center;
+}
 
+.footer-column {
+    padding: 0 15px;
 }
 
 .foot_menu_group {
+    display: block;
     color: #FF5000;
     font-size: 20px !important;
     font-weight: 600;
-    margin: 0 0 20px 0;
-    letter-spacing: 0.5px;
+    margin: 0 0 5px 0;
 }
 
 .footer-column ul {
     list-style: none;
-    padding: 0;
+    padding: 0 0 0 27px;
     margin: 0;
 }
 
 .footer-column li {
     color: #fff !important;
     font-size: 14px;
-    margin-bottom: 12px;
+    line-height: 20px;
+    padding: 3px 0;
+    margin: 0;
     cursor: pointer;
     transition: color 0.3s ease;
 }
@@ -1359,7 +1399,8 @@ img.DialogInsightFormSubmitLoader {
     }
 
     .footer-columns {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 288px);
+        row-gap: 30px;
     }
 }
 
@@ -1385,6 +1426,7 @@ img.DialogInsightFormSubmitLoader {
 
     .footer-columns {
         grid-template-columns: repeat(2, 1fr);
+        width: 100%;
         gap: 30px;
     }
 
@@ -1416,7 +1458,7 @@ img.DialogInsightFormSubmitLoader {
         gap: 10px;
     }
 
-    .legal-links span {
+    .legal-links .legal-sep {
         display: none;
     }
 }
@@ -1564,21 +1606,8 @@ img.DialogInsightFormSubmitLoader {
 }
 
 @media screen and (max-width: 768px) {
-    /* Bandeau informatif mobile */
-    .info-banner {
-        height: 35px;
-    }
     
-    .banner-item {
-        font-size: 12px;
-        font-family: 'Arial Black', 'Helvetica Bold', Arial, sans-serif;
-        font-weight: 900;
-        margin: 0 8px;
-    }
     
-    .banner-separator {
-        margin: 0 6px;
-    }
     
     /* Header mobile */
     .header-container {
@@ -1647,18 +1676,6 @@ img.DialogInsightFormSubmitLoader {
         width: 280px;
     }
     
-    .info-banner {
-        height: 30px;
-    }
     
-    .banner-item {
-        font-size: 11px;
-        font-family: 'Arial Black', 'Helvetica Bold', Arial, sans-serif;
-        font-weight: 900;
-        margin: 0 6px;
-    }
     
-    .banner-separator {
-        margin: 0 4px;
-    }
 }
