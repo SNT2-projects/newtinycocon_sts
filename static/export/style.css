@@ -1468,11 +1468,16 @@ article img {
     text-transform: uppercase;
     text-decoration: none;
     white-space: nowrap;
-    transition: color 0.2s ease, opacity 0.2s ease;
+    transition: color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .modern-header .hd-nav a:hover {
     color: #FF5000;
+}
+
+/* Survol des entrées simples : trait orange de 3px sous le lien (en ombre pour ne pas décaler la nav) */
+.modern-header .hd-nav a:not(.hd-pill):hover {
+    box-shadow: inset 0 -3px 0 #FF5000;
 }
 
 .modern-header .hd-nav a.hd-pill {
@@ -1480,26 +1485,37 @@ article img {
     border-radius: 30px;
 }
 
-.modern-header .hd-nav a.hd-pill:hover {
-    opacity: 0.85;
-}
-
-.modern-header .hd-nav a.hd-pill-grey,
-.modern-header .hd-nav a.hd-pill-grey:hover {
+.modern-header .hd-nav a.hd-pill-grey {
     background: #eee;
     color: #242938;
 }
 
-.modern-header .hd-nav a.hd-pill-blue,
-.modern-header .hd-nav a.hd-pill-blue:hover {
+.modern-header .hd-nav a.hd-pill-blue {
     background: #147ca0;
     color: #fff;
 }
 
-.modern-header .hd-nav a.hd-pill-orange,
-.modern-header .hd-nav a.hd-pill-orange:hover {
+.modern-header .hd-nav a.hd-pill-orange {
     background: #FF5000;
     color: #fff;
+}
+
+/* Survol : contour en box-shadow pour ne pas modifier la taille des boutons */
+.modern-header .hd-nav a.hd-pill-grey:hover {
+    background: #242938;
+    color: #fff;
+}
+
+.modern-header .hd-nav a.hd-pill-blue:hover {
+    background: transparent;
+    box-shadow: inset 0 0 0 1px #147ca0;
+    color: #147ca0;
+}
+
+.modern-header .hd-nav a.hd-pill-orange:hover {
+    background: transparent;
+    box-shadow: inset 0 0 0 1px #FF5000;
+    color: #FF5000;
 }
 
 /* Menu mobile (panneau latéral) */
