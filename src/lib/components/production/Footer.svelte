@@ -23,6 +23,16 @@
     window.Didomi?.preferences.show();
   }
 
+  // Ouvre un lien externe dans un nouvel onglet
+  function openNew(url: string) {
+    window.open(url, '_blank');
+  }
+
+  // Accordéon des colonnes du footer (mobile)
+  function toggleColumn(event: MouseEvent) {
+    (event.currentTarget as HTMLElement).parentElement?.classList.toggle('is-open');
+  }
+
   // Date pour le copyright
   const currentYear = new Date().getFullYear();
 </script>
@@ -34,7 +44,7 @@
       <div class="footer-columns">
         <!-- Colonne Univers produit -->
         <div class="footer-column">
-          <span class="foot_menu_group">Univers produit</span>
+          <span class="foot_menu_group" on:click={toggleColumn}>Univers produit</span>
           <ul>
             <li on:click={() => goTo('https://www.studiosport.fr/drones-modelisme-c-30.html')}>Drones</li>
             <li on:click={() => goTo('https://www.studiosport.fr/dji/')}>Drones DJI</li>
@@ -50,7 +60,7 @@
 
         <!-- Colonne Pages pratiques -->
         <div class="footer-column">
-          <span class="foot_menu_group">Pages pratiques</span>
+          <span class="foot_menu_group" on:click={toggleColumn}>Pages pratiques</span>
           <ul>
             <li on:click={() => goTo('https://www.studiosport.fr/nos-guides-dachat-m60387.html')}>Guides d'achat</li>
             <li on:click={() => goTo('https://www.studiosport.fr/foire-aux-questions-faq-m62960.html')}>Foire aux questions (F.A.Q)</li>
@@ -66,7 +76,7 @@
 
         <!-- Colonne Groupe studioSPORT -->
         <div class="footer-column">
-          <span class="foot_menu_group">Groupe studioSPORT</span>
+          <span class="foot_menu_group" on:click={toggleColumn}>Groupe studioSPORT</span>
           <ul>
             <li on:click={() => goTo('https://www.studiosport.fr/qui-sommes-nous.html')}>Qui sommes-nous ?</li>
             <li on:click={() => goTo('https://www.studiosport.fr/rejoindre-notre-equipe-m60562.html')}>Rejoindre l'équipe</li>
@@ -75,23 +85,6 @@
             <li on:click={() => goTo('https://www.studiosport.fr/drones-fpv/atelier-fpv-studiosport-c2403.html')}>L’Atelier FPV studioSPORT</li>
             <li on:click={() => goTo('https://www.studiosport.fr/conception-recherche-montage.html')}>Bureau d’études ABOT</li>
             <li on:click={() => goTo('https://www.studiosport.fr/avis-client-studiosport.html')}>Avis clients</li>
-          </ul>
-        </div>
-
-        <!-- Colonne Tendances -->
-        <div class="footer-column">
-          <span class="foot_menu_group">Tendances</span>
-          <ul>
-            <li on:click={() => goTo('https://www.studiosport.fr/cameras/cameras-dji/osmo-360-2-c4370.html')}>DJI Osmo 360 II</li>
-            <li on:click={() => goTo('https://www.studiosport.fr/cameras-amp-appareils-photo/cameras-insta360/x6-c4497.html')}>Insta360 X6</li>
-            <li on:click={() => goTo('https://www.studiosport.fr/cameras/cameras-dji/osmo-pocket-4p-c4366.html')}>DJI Osmo Pocket 4P</li>
-            <li on:click={() => goTo('https://www.studiosport.fr/cameras/dji/osmo-pocket-4-c4224.html')}>DJI Osmo Pocket 4</li>
-            <li on:click={() => goTo('https://www.studiosport.fr/drones/drones-dji/lito-c4229.html')}>DJI Lito 1 &amp; DJI Lito X1</li>
-            <li on:click={() => goTo('https://www.studiosport.fr/cameras/gopro/hero-13-c4381.html')}>GoPro Hero 13</li>
-            <li on:click={() => goTo('https://www.studiosport.fr/insta360-x4-air-m67933.html')}>Insta360 X4 Air</li>
-            <li on:click={() => goTo('https://www.studiosport.fr/stabilisateurs-camera/stabilisateurs-dji/rs-5-c4192.html')}>DJI RS5</li>
-            <li on:click={() => goTo('https://www.studiosport.fr/drones/antigravity-c4196.html')}>Antigravity A1</li>
-            <li on:click={() => goTo('https://www.studiosport.fr/cameras/insta360/luna-ultra-c4490.html')}>Insta360 Luna Ultra</li>
           </ul>
         </div>
       </div>
@@ -111,24 +104,24 @@
       </div>
       <div class="right">
         <div class="social-links">
-          <a href="https://www.facebook.com/studiosportfrance" target="_blank" rel="noopener">
-            <i class="fa fa-facebook-square"></i>
-          </a>
-          <a href="https://www.instagram.com/studiosportfrance" target="_blank" rel="noopener">
-            <i class="fa fa-instagram"></i>
-          </a>
-          <a href="https://www.tiktok.com/@studiosportfrance" target="_blank" rel="noopener">
-            <img width="32" height="32" src="https://www.studiosport.fr/upload/image/-image-278534-grande.png?1751553790" alt="TikTok">
-          </a>
-          <a href="https://www.youtube.com/studiosportfrance" target="_blank" rel="noopener">
-            <i class="fa fa-youtube-play"></i>
-          </a>
-          <a href="https://twitter.com/studiosportfr" target="_blank" rel="noopener">
-            <img width="32" height="32" src="https://www.studiosport.fr/upload/image/-image-278535-grande.png?1751553801" alt="X">
-          </a>
-          <a href="https://www.linkedin.com/company/studiosport" target="_blank" rel="noopener">
-            <i class="fa fa-linkedin"></i>
-          </a>
+          <span class="social-link" role="link" tabindex="0" title="Facebook" on:click={() => openNew('https://www.facebook.com/studiosport.fr/')}>
+             <i class="fa fa-facebook-square"></i>
+          </span>
+          <span class="social-link" role="link" tabindex="0" title="Instagram" on:click={() => openNew('https://www.instagram.com/studiosport.fr/?hl=fr')}>
+             <i class="fa fa-instagram"></i>
+          </span>
+          <span class="social-link" role="link" tabindex="0" title="TikTok" on:click={() => openNew('https://www.tiktok.com/@studiosport.fr')}>
+             <img width="32" height="32" src="https://www.studiosport.fr/upload/image/-image-278534-grande.png?1751553790" alt="TikTok">
+          </span>
+          <span class="social-link" role="link" tabindex="0" title="YouTube" on:click={() => openNew('https://www.youtube.com/@StudiosportFr/videos')}>
+             <i class="fa fa-youtube-play"></i>
+          </span>
+          <span class="social-link" role="link" tabindex="0" title="X" on:click={() => openNew('https://x.com/studiosport_fr')}>
+             <img width="32" height="32" src="https://www.studiosport.fr/upload/image/-image-278535-grande.png?1751553801" alt="X">
+          </span>
+          <span class="social-link" role="link" tabindex="0" title="LinkedIn" on:click={() => openNew('https://www.linkedin.com/company/studiosport')}>
+             <i class="fa fa-linkedin"></i>
+          </span>
         </div>
         <p class="community-text">Rejoignez notre communauté de passionnés de drones et caméras</p>
       </div>
