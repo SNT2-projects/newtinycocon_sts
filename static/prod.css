@@ -1216,6 +1216,8 @@ img.DialogInsightFormSubmitLoader {
 
 .modern-header .hd-main {
     position: relative;
+    max-width: 1600px;
+    margin: auto;
     background: #fff;
 }
 
@@ -1249,7 +1251,10 @@ img.DialogInsightFormSubmitLoader {
     justify-self: center;
     display: flex;
     align-items: center;
-    width: calc(100% - 40px);
+    /* Même calcul que studiosport.fr : 75% de la colonne centrale moins ses 2x15px de marge.
+       Les colonnes logo/actions de la prod sont 37.5px plus larges que celles du cocon,
+       d'où (100% - 37.5px - 30px) * 0.75 => 206px à 1024px, 375px à 1250px */
+    width: calc((100% - 67.5px) * 0.75);
     max-width: 500px;
     height: 51px;
     margin: 0;
@@ -1367,6 +1372,8 @@ img.DialogInsightFormSubmitLoader {
 /* Barre de navigation */
 .modern-header .hd-nav {
     display: block;
+    max-width: 1600px;
+    margin: auto;
     height: 50px;
     background: #fff;
 }
@@ -1390,10 +1397,10 @@ img.DialogInsightFormSubmitLoader {
 .modern-header .hd-nav a {
     display: block;
     height: 40px;
-    padding: 0 3px;
+    padding: .05em 1em;
     font-family: 'baijamjuree-bold', 'Bai Jamjuree', Arial, sans-serif;
     font-weight: 700;
-    font-size: 13px;
+    font-size: 15px;
     line-height: 40px;
     color: #242938;
     text-transform: uppercase;
@@ -1412,8 +1419,24 @@ img.DialogInsightFormSubmitLoader {
 }
 
 .modern-header .hd-nav a.hd-pill {
-    padding: 0 4px;
     border-radius: 30px;
+}
+
+/* Paliers de la prod pour que la nav tienne sur une ligne */
+@media (max-width: 1520px) {
+    .modern-header .hd-nav a {
+        padding-left: .25em;
+        padding-right: .25em;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .modern-header .hd-nav a {
+        padding-left: .33em;
+        padding-right: .33em;
+        font-size: 12px;
+    }
 }
 
 .modern-header .hd-nav a.hd-pill-grey {
